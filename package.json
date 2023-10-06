@@ -1,0 +1,25 @@
+{
+  "name": "tpsb_reforged",
+  "version": "1.0.0",
+  "description": "TPSB Bot Reforged",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js",
+    "commands": "node deploy_commands.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/TheDonBase/TPSB_Reforged"
+  },
+  "keywords": [
+    "TPSB",
+    "Bot"
+  ],
+  "author": "TheDonBase",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "fetch": "^1.1.0",
+    "mysql": "^2.18.1"
+  }
+}
