@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const Database = require("../../utils/database_handler");
+const Logger = require('../../utils/Logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,7 +22,7 @@ module.exports = {
 
             await interaction.reply('Successfully registered all users in the database.');
         } catch (error) {
-            console.error('Error registering users:', error);
+            Logger.error('Error registering users:', error);
             await interaction.reply('Error occurred while registering users.');
         }
     }

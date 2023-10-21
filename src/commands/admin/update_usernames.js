@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const fetch = require('node-fetch'); // Import the 'fetch' library
 const Database = require("../../utils/database_handler");
+const Logger = require('../../utils/Logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -33,7 +34,7 @@ module.exports = {
 
             await interaction.reply('Usernames updated successfully!');
         } catch (error) {
-            console.error('Error updating usernames:', error);
+            Logger.error('Error updating usernames:', error);
             await interaction.reply('Error occurred while updating usernames.');
         }
     }

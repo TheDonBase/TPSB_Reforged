@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const Database = require('../utils/database_handler.js');
+const Logger = require('../utils/Logger');
 
 module.exports = {
     name: Events.MessageCreate,
@@ -7,13 +8,13 @@ module.exports = {
         if (message.channel.type === 1 && !message.author.bot) {
             if(message.content.includes("api-key:"))
                 {
-                    console.log('Message contains API key instruction.');
+                    Logger.info('Message contains API key instruction.');
 
                     // Split the message content at ":" and take anything after that as the API key
                     const splitMessage = message.content.split(':');
                     if (splitMessage.length >= 2) {
                         const apiKey = splitMessage[1].trim(); // Extract the API key (removing extra spaces)
-                        console.log('Extracted API key:', apiKey);
+                        Logger.info('Extracted API key:', apiKey);
                         const db = new Database();
                         try {
                             // Insert the username and API key into the api_keys table
@@ -27,7 +28,7 @@ module.exports = {
                             await message.reply('Error occurred while registering your API key.');
                         }
                     } else {
-                        console.log('Invalid API key format.'); // Handle invalid format
+                        Logger.error('Invalid API key format.'); // Handle invalid format
                     }
                 }
         }

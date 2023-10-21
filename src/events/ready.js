@@ -1,12 +1,13 @@
 const { Events } = require('discord.js');
+const Logger = require('../utils/Logger');
 
 module.exports = {
     name: Events.ClientReady,
     once: true,
     execute(client) {
-        console.log(`Ready! Logged in as ${client.user.tag}.`);
-        console.log(`${ client.commands.size } Commands Registered.`);
-        console.log(`${ client.events.size } Events Registered.`);
+        Logger.info(`Ready! Logged in as ${client.user.tag}.`);
+        Logger.info(`${ client.commands.size } Commands Registered.`);
+        Logger.info(`${ client.events.size } Events Registered.`);
         client.user.setActivity('https://www.torn.com/');
     },
 };

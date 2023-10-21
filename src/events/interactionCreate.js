@@ -1,4 +1,5 @@
 const { Events } = require('discord.js');
+const Logger = require('../utils/Logger');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -8,15 +9,15 @@ module.exports = {
         const command = interaction.client.commands.get(interaction.commandName);
         
         if(!command) {
-            console.error(`No command matching ${interaction.commandName} was found.`);
+            Logger.error(`No command matching ${interaction.commandName} was found.`);
             return;
         }
         
         try {
             await command.execute(interaction);
         } catch (error) {
-            console.error(`Error executing ${interaction.commandName}`);
-            console.error(error);
+            Logger.error(`Error executing ${interaction.commandName}`);
+            Logger.error(error);
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
             } else {
