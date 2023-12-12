@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const Database = require("../../utils/database_handler");
-const Logger = require('../../utils/Logger');
+const Logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -33,7 +33,7 @@ module.exports = {
                 const nickname = member.displayName;
                 const tornId = await extractTornIdFromNickname(nickname);
 
-                if (tornId) {
+                if (tornId || member.user.bot) {
                     verifiedMembers++;
                 } else {
                     try {

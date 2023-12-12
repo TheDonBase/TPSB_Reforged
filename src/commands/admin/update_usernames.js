@@ -1,7 +1,7 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const fetch = require('node-fetch'); // Import the 'fetch' library
+const {SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const Database = require("../../utils/database_handler");
-const Logger = require('../../utils/Logger');
+const Logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -17,7 +17,7 @@ module.exports = {
             const apiKeysAndUsernames = await db.query('SELECT api_key, username FROM api_keys');
 
             // Iterate through the fetched data and update Discord usernames
-            for (const { api_key: apiKey, username } of apiKeysAndUsernames) {
+            for (const {api_key: apiKey, username} of apiKeysAndUsernames) {
                 // Make a GET request to Torn API using the apiKey
                 const response = await fetch(`https://api.torn.com/user/?selections=profile&key=${apiKey}`);
                 const userData = await response.json();
@@ -26,7 +26,7 @@ module.exports = {
                 const newUsername = `${userData.name} [${userData.player_id}]`;
 
                 // Find the Discord user by username and update their nickname
-                const member = await interaction.guild.members.fetch({ query: username, limit: 1 });
+                const member = await interaction.guild.members.fetch({query: username, limit: 1});
                 if (member) {
                     await member.first().setNickname(newUsername);
                 }

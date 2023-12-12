@@ -56,4 +56,25 @@ for (const file of eventFiles) {
     }
 }
 
+const files = fs.readdirSync('./src/cronJobs');
+
+if (!files) {
+    Logger.error('missing files')
+    return;
+}
+
+let jsFiles = files.filter(f => f.split('.').pop() === 'js');
+
+if(jsFiles.length <= 0) {
+    return;
+}
+
+Logger.info(`Loading ${jsFiles.length} cron jobs`);
+
+jsFiles.forEach((f, i) => {
+    let props = require(`./src/cronJobs/${f}`);
+    Logger.info(`${i + 1}: ${f} loaded.`)
+    props(client);
+});
+
 client.login(token);

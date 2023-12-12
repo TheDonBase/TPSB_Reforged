@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "node app.js",
+    "watch": "nodemon app.js",
     "commands": "node deploy_commands.js"
   },
   "repository": {
@@ -20,6 +21,8 @@
   "dependencies": {
     "discord.js": "^14.13.0",
     "fetch": "^1.1.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2"
   }
 }
