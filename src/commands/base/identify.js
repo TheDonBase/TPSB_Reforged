@@ -14,7 +14,7 @@ module.exports = {
         .setRequired(true)),
     async execute(interaction) {
         const db = new Database(); // Assuming you have a method to query your database
-        const api_key_json = await db.getApiKey(); // Assuming db.getApiKey() returns a JSON string
+        const api_key_json = await db.getApiKey('peace'); // Assuming db.getApiKey() returns a JSON string
         let api_key;
         try {
             const api_key_array = JSON.parse(api_key_json);

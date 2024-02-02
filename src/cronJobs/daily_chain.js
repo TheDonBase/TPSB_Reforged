@@ -39,7 +39,7 @@ module.exports = client => {
         }
         const chainers = '<@&1117518078616539197>';
 
-        const api_key_json = await db.getApiKey(); // Assuming db.getApiKey() returns a JSON string
+        const api_key_json = await db.getApiKey('peace'); // Assuming db.getApiKey() returns a JSON string
         let api_key;
         try {
             const api_key_array = JSON.parse(api_key_json);
@@ -64,7 +64,7 @@ module.exports = client => {
                 channel.send(`:rotating_light: ${chainers} Awwww f---... Chain has cooldown \n ${cooldownMessage} :( :rotating_light:`);
                 Logger.info(`Awww shmucks... Chain has cooldown :(`);
             } else if (current > 0) {
-                channel.send(`:rotating_light: ${chainers} Daily chain has started or is in progress! \n Current Kills: **${current}** \n Let the slaughtering commence! :rotating_light:`);
+                channel.send(`:rotating_light: ${chainers} Daily chain is in progress! \n Current Kills: **${current}** \n Let the slaughtering commence! :rotating_light:`);
                 Logger.info(`Sending chain in progress message.`);
             } else {
                 channel.send(`:rotating_light: ${chainers} Daily chain is starting now! Let the slaughtering commence! :rotating_light:`);

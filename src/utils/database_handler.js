@@ -22,10 +22,10 @@ class Database {
         }
     }
 
-    async getApiKey() {
+    async getApiKey(faction_type) {
         try {
             Logger.info("Retreiving API Key.");
-            const sql = "SELECT api_key from api_keys WHERE username = 'thedonbase'";
+            const sql = `SELECT api_key from api_keys WHERE faction = '${faction_type}'`;
             let result = await this.query(sql);
             Logger.info(`Retrieved api key: ${JSON.stringify(result)}`);
             return JSON.stringify(result);
