@@ -20,7 +20,7 @@
   "author": "TheDonBase",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.13.0",
+    "discord.js": "^14.12.1",
     "fetch": "^1.1.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.1",
