@@ -3,6 +3,9 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const { token } = require('./config.json');
 const Logger = require('./src/utils/Logger');
+const { Users, CurrencyShop } = require('./src/utils/dbObjects.js');
+const { Op } = require('sequelize');
+const CurrencyHelper = require('./src/utils/CurrencyHelper');
 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds,
@@ -17,6 +20,8 @@ const client = new Client({ intents: [
     Partials.Message
 ]
 });
+
+client.currency = new Collection();
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'src/commands');
@@ -48,10 +53,10 @@ for (const file of eventFiles) {
         client.events.set(event.name, event);
     } 
     if (event.once) {
-        client.once(event.name, (...args) => event.execute(...args));
+        client.once(event.name, (...args) => event.execute(...args, client));
         Logger.info(`Running Event: ${event.name}`);
     } else {
-        client.on(event.name, (...args) => event.execute(...args));
+        client.on(event.name, (...args) => event.execute(...args, client));
         Logger.info(`Running Event: ${event.name}`);
     }
 }
@@ -76,5 +81,9 @@ jsFiles.forEach((f, i) => {
     Logger.info(`${i + 1}: ${f} loaded.`)
     props(client);
 });
+
+
+client.currency_helper = new CurrencyHelper(client);
+Logger.info(`Added CurrencyHelper`)
 
 client.login(token);

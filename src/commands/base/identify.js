@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, userMention } = require('discord.js');
-const Database = require("../../utils/database_handler");
+const Database = require("../../utils/DatabaseHandler");
 const Logger = require('../../utils/logger');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 

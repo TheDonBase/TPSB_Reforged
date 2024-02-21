@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node app.js",
     "watch": "nodemon app.js",
-    "commands": "node deploy_commands.js"
+    "commands": "node deploy_commands.js",
+    "dbinit": "node src/utils/dbInit.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,11 @@
     "discord.js": "^14.13.0",
     "fetch": "^1.1.0",
     "mysql": "^2.18.1",
+    "mysql2": "^3.9.1",
     "node-cron": "^3.0.3",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "sequelize": "^6.37.1",
+    "sequelize-cli": "^6.6.2",
+    "sqlite3": "^5.1.7"
   }
 }

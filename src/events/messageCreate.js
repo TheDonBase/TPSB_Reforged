@@ -1,10 +1,10 @@
 const {Events} = require('discord.js');
-const Database = require('../utils/database_handler.js');
+const Database = require('../utils/DatabaseHandler');
 const Logger = require('../utils/Logger');
 
 module.exports = {
     name: Events.MessageCreate,
-    async execute(message) {
+    async execute(message, client) {
         if (message.channel.type === 1 && !message.author.bot) {
             if (message.content.includes("api-key:")) {
                 Logger.info('Message contains API key instruction.');
@@ -66,5 +66,7 @@ module.exports = {
                 }
             }
         }
+        if(message.author.bot) return;
+        await client.currency_helper.addBalance(message.author.id, 1)
     },
 };

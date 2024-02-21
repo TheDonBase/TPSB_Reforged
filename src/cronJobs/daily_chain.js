@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const Logger = require('../utils/Logger');
-const Database = require("../utils/database_handler");
+const Database = require("../utils/DatabaseHandler");
 
 
 const warboard_channel = '731431926774235186';

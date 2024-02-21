@@ -1,6 +1,6 @@
 const {SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-const Database = require("../../utils/database_handler");
+const Database = require("../../utils/DatabaseHandler");
 const Logger = require('../../utils/logger');
 
 module.exports = {
