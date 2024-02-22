@@ -11,9 +11,9 @@ const force = process.argv.includes('--force') || process.argv.includes('-f');
 
 sequelize.sync({ force }).then(async () => {
     const shop = [
-        await CurrencyShop.upsert({name: 'Tea', cost: 1}),
-        await CurrencyShop.upsert({name: 'Coffee', cost: 2}),
-        await CurrencyShop.upsert({name: 'Cake', cost: 5}),
+        await CurrencyShop.upsert({name: 'Xanax', cost: 5000}),
+        await CurrencyShop.upsert({name: 'Drug Pack', cost: 15000}),
+        await CurrencyShop.upsert({name: 'Donator Pack', cost: 25000}),
         ];
 
     await Promise.all(shop);

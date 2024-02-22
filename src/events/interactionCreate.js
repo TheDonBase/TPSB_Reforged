@@ -3,7 +3,7 @@ const Logger = require('../utils/Logger');
 
 module.exports = {
     name: Events.InteractionCreate,
-    async execute(interaction) {
+    async execute(interaction, client) {
         if(!interaction.isChatInputCommand()) return;
         Logger.info(`${interaction.user.username} is running ${interaction.commandName}`);
         const command = interaction.client.commands.get(interaction.commandName);
@@ -14,7 +14,7 @@ module.exports = {
         }
         
         try {
-            await command.execute(interaction);
+            await command.execute(interaction, client);
         } catch (error) {
             Logger.error(`Error executing ${interaction.commandName}`);
             Logger.error(error);
