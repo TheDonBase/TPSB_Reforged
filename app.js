@@ -3,8 +3,6 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const { token } = require('./config.json');
 const Logger = require('./src/utils/Logger');
-const { Users, CurrencyShop } = require('./src/utils/dbObjects.js');
-const { Op } = require('sequelize');
 const CurrencyHelper = require('./src/utils/CurrencyHelper');
 
 const client = new Client({ intents: [

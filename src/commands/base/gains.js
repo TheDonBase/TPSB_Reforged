@@ -14,7 +14,16 @@ module.exports = {
             const userExistsResult = await db.query(userExistsQuery, [interaction.user.username]);
 
             if (userExistsResult.length === 0) {
-                await interaction.reply('You are not registered in the stat tracker.');
+                const instructions = `
+                You are not registered in the stat tracker.
+                Please send me a private message with the following text:
+                \`\`\`
+                track-stats:<your-api-key>
+                \`\`\`
+                Replace <your-api-key> with your Torn API key.
+                And you don't have to use < - > these symbols
+                `;
+                await interaction.reply(instructions);
                 return;
             }
 

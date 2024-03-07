@@ -23,33 +23,59 @@ module.exports = {
         let peace_members;
 
         try {
-      const verifiedMessage = await processMembers(apiKeyArray[0].api_key);
+            const verifiedMessage = await processMembers(apiKeyArray[0].api_key);
 
-      // Create a rich embed
-      const embed = {
-          color: '7419530', // Set the color of the embed
-        title: 'Member Verification Stats',
-        fields: [
-          {
-              name: 'War Members',
-              value: `${verifiedWarMembers} out of ${war_members.length}`,
-              inline: false,
-          },
-          {
-              name: 'Peace Members',
-              value: `${verifiedPeaceMembers} out of ${peace_members.length}`,
-              inline: false,
-          },
-          ],
-          timestamp: new Date(),
-      };
+            // Create a rich embed
+            const embed = {
+                color: '7419530', // Set the color of the embed
+                title: 'Member Verification Stats',
+                fields: [
+                    {
+                        name: 'War Members',
+                        value: `${verifiedWarMembers} out of ${war_members.length}`,
+                        inline: false,
+                    },
+                    {
+                        name: 'Peace Members',
+                        value: `${verifiedPeaceMembers} out of ${peace_members.length}`,
+                        inline: false,
+                    },
+                ],
+                timestamp: new Date(),
+            };
 
-      await interaction.reply({ embeds: [embed] });
+            // Get non-affiliated members
+            const allGuildMembers = guild.members.cache.map(member => member.displayName);
+            const nonAffiliatedMembers = [];
+            for (const nickname of allGuildMembers) {
+                const tornId = await extractTornIdFromNickname(nickname);
+                Logger.debug(tornId);
+                if (tornId && !(war_members.includes(tornId) || peace_members.includes(tornId))) {
+                    nonAffiliatedMembers.push(nickname);
+                }
+            }
+
+            // Truncate non-affiliated members if length exceeds maximum
+            let truncatedNonAffiliatedMembers = nonAffiliatedMembers.join(', ');
+            if (truncatedNonAffiliatedMembers.length > 1024) {
+                truncatedNonAffiliatedMembers = truncatedNonAffiliatedMembers.slice(0, 1021) + '...';
+            }
+
+            // Add non-affiliated members to the embed if it's not empty
+            if (truncatedNonAffiliatedMembers) {
+                embed.fields.push({
+                    name: 'Non-affiliated Members',
+                    value: truncatedNonAffiliatedMembers,
+                    inline: false,
+                });
+            }
+
+            await interaction.reply({ embeds: [embed] });
         } catch (error) {
             Logger.error(`Error proccessing members: ${error}`);
             await interaction.reply('Error occurred while checking users.');
         }
-        
+
 
         async function processMembers(api_key) {
             Logger.info("Processing members");
