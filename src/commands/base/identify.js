@@ -30,7 +30,6 @@ module.exports = {
         }
         const torn_id = interaction.options.getString('torn_id');
         const parsed_id = Number.parseInt(torn_id);
-        const war_role = '1163116813308133376';
         const member_role = '731434407466106881';
         const giveaway_role = '731964035506896996';
         if(parsed_id == 1142705) {
@@ -45,21 +44,14 @@ module.exports = {
                 let newUsername = `${data.name} [${data.player_id}]`;
                 Logger.debug(`Name: ${data.name}`);
                 Logger.debug(`Player id: ${data.player_id}`);
-                if (data.faction.faction_id == 8322 || data.faction.faction_id == 19249) {
+                if (data.faction.faction_id == 8322) {
                     if(data.faction.faction_id == 8322) {
                         newUsername = `${data.name} [${data.player_id}] {TPS - Peace}`;
                         if(newUsername.length >= 32) {
                             newUsername = `${data.name} [${data.player_id}]`;
                         }
                     } else {
-                        newUsername = `${data.name} [${data.player_id}] {TSP - War}`;
-                        if(newUsername.length >= 32) {
-                            newUsername = `${data.name} [${data.player_id}]`;
-                        }
-                        if (!interaction.member.roles.cache.has(war_role)) {
-                            await interaction.member.roles.add(war_role); // Add member role
-                            Logger.info("Added War Role");
-                        }
+                        await interaction.reply("You are not part of the faction.");
                     }
                     await interaction.member.setNickname(newUsername);
                     Logger.info("Setting new nickname!");

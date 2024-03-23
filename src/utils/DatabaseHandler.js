@@ -52,7 +52,7 @@ class Database {
             });
         });
     }
-
+    
     async close() {
         this.pool.end((err) => {
             if (err) {
