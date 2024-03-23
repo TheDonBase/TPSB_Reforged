@@ -46,7 +46,7 @@ module.exports = {
                 Logger.debug(`Player id: ${data.player_id}`);
                 if (data.faction.faction_id == 8322) {
                     if(data.faction.faction_id == 8322) {
-                        newUsername = `${data.name} [${data.player_id}] {TPS - Peace}`;
+                        newUsername = `${data.name} [${data.player_id}]`;
                         if(newUsername.length >= 32) {
                             newUsername = `${data.name} [${data.player_id}]`;
                         }
