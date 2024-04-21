@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const Logger = require('../utils/Logger');
+const Logger = require('../utils/logger');
 const Database = require("../utils/DatabaseHandler");
 
 
@@ -25,7 +25,7 @@ function formatCooldown(cooldownSeconds) {
 }
 
 module.exports = client => {
-    cron.schedule('00 20 * * *', async () => {
+    cron.schedule('00 19 * * *', async () => {
         Logger.info(`Running Daily Chain.`);
         const guild = client.guilds.cache.get(guild_id); // fetch the first guild in the cache
         if (!guild) {

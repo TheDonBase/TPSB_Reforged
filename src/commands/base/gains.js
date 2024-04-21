@@ -18,10 +18,10 @@ module.exports = {
                 You are not registered in the stat tracker.
                 Please send me a private message with the following text:
                 \`\`\`
-                track-stats:<your-api-key>
+track-stats:<your-api-key>
                 \`\`\`
                 Replace <your-api-key> with your Torn API key.
-                And you don't have to use < - > these symbols
+                And you don't have to use < - > these symbols, \n Make sure the API Key is ***Atleast*** Limited Access. if it is not and you have set an api key and recieve an error. Please contact TheDonBase.
                 `;
                 await interaction.reply(instructions);
                 return;
@@ -89,5 +89,6 @@ module.exports = {
 };
 
 function formatNumberWithCommas(number) {
+    Logger.debug(`Number is: ${number}`);
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

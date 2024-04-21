@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const Logger = require('../utils/Logger');
+const Logger = require('../utils/logger');
 const Database = require("../utils/DatabaseHandler");
 
 const execution_chamber = '731989414531563603';

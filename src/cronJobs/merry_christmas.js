@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const Logger = require('../utils/Logger');
+const Logger = require('../utils/logger');
 
 const general_channel = '731431228959490111';
 const guild_id = '731431228959490108';

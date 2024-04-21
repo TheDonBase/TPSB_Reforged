@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const Logger = require('../utils/Logger');
+const Logger = require('../utils/logger');
 const { Users } = require('../utils/dbObjects');
 
 module.exports = {

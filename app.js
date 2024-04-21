@@ -2,9 +2,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const { token } = require('./config.json');
-const Logger = require('./src/utils/Logger');
+const Logger = require('./src/utils/logger.js');
 const CurrencyHelper = require('./src/utils/CurrencyHelper');
-
+ 
 const client = new Client({ intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
