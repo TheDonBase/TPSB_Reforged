@@ -38,7 +38,7 @@ module.exports = {
                     embed.fields.push({ name: guard.hour, value: guard.player });
                 });
 
-                await interaction.reply({ embeds: [embed] });
+                await interaction.channel.send({ embeds: [embed] });
             }
         } catch (error) {
             console.error('Error fetching or processing data:', error);
