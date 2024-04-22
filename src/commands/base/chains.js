@@ -8,7 +8,9 @@ module.exports = {
     async execute(interaction) {
         const url = 'https://croaztek.com/admin/api_get_chains';
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                method: 'GET'
+            });
             if (!response.ok) {
                 interaction.reply("There was an error getting the chains, please contact TheDonBase");
             }
