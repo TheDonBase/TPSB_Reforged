@@ -32,11 +32,11 @@ module.exports = {
                     ]
                 };
 
-                // Filter guards for the current day and add them to the embed
-                const guardsForDay = chain.guards.filter(guard => guard.day === day.date);
-                guardsForDay.forEach(guard => {
-                    embed.fields.push({ name: guard.hour, value: guard.player });
-                });
+                const guardsForDay = chain.guards.filter(guard => guard.day === day.day);
+                                guardsForDay.forEach(guard => {
+                                    embed.fields.push({ name: guard.hour, value: guard.player });
+                                });
+
 
                 await interaction.channel.send({ embeds: [embed] });
             }
