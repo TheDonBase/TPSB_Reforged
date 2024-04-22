@@ -11,7 +11,7 @@ module.exports = {
     .setDescription("Chain ID")
     .setMinValue(1)),
     async execute(interaction) {
-        const id = interaction.options.getString('id');
+        const id = interaction.options.getInteger('id');
         const url = `https://croaztek.com/admin/api_get_chain/${id}`;
         try {
                     const response = await fetch(url, {
