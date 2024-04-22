@@ -33,9 +33,11 @@ module.exports = {
 
                 const guardsForDay = chain.guards.filter(guard => guard.day === day.day);
                                 guardsForDay.forEach(guard => {
-                                    const startHour = guard.hour.toString().padStart(2, '0');
-                                    const endHour = (guard.hour + 1).toString().padStart(2, '0');
-                                    embed.fields.push({ name: `${startHour} - ${endHour}`, value: `**${guard.player}**` });
+                                    const startHour = parseInt(guard.hour, 10);
+                                    const endHour = startHour + 1;
+                                    const formattedStartHour = startHour.toString().padStart(2, '0');
+                                    const formattedEndHour = endHour.toString().padStart(2, '0');
+                                    embed.fields.push({ name: `${formattedStartHour} - ${formattedEndHour}`, value: `**${guard.player}**` });
                                 });
 
 
