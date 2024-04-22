@@ -1,5 +1,4 @@
-const {SlashCommandBuilder} = require('discord.js');
-const {MessageEmbed} = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,24 +21,25 @@ module.exports = {
             }
             const chain = await response.json();
 
-            const embed = {
-                color: 0x0099ff,
-                title: 'Chain Details',
-                fields: [
-                    {name: 'Chain ID', value: chain.id, inline: true},
-                    {name: 'Date', value: chain.date.date, inline: true}
-                ]
-            };
+            // Loop through each day and create an embed for each
+            for (const day of chain.days) {
+                const embed = {
+                    color: 0x0099ff,
+                    title: `Chain Details - ${day.day}`,
+                    fields: [
+                        { name: 'Chain ID', value: chain.id, inline: true },
+                        { name: 'Date', value: day.date, inline: true }
+                    ]
+                };
 
-            chain.days.forEach(day => {
-                const guardsString = chain.guards
-                    .filter(guard => guard.day === day.date)
-                    .map(guard => `${guard.hour}: ${guard.player}`)
-                    .join('\n');
-                embed.fields.push({name: day.day, value: `${day.date}\nGuards:\n${guardsString}`});
-            });
+                // Filter guards for the current day and add them to the embed
+                const guardsForDay = chain.guards.filter(guard => guard.day === day.date);
+                guardsForDay.forEach(guard => {
+                    embed.fields.push({ name: guard.hour, value: guard.player });
+                });
 
-            await interaction.reply({embeds: [embed]});
+                await interaction.reply({ embeds: [embed] });
+            }
         } catch (error) {
             console.error('Error fetching or processing data:', error);
             await interaction.reply('Failed to fetch or process data.');
