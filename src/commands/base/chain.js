@@ -33,7 +33,9 @@ module.exports = {
 
                 const guardsForDay = chain.guards.filter(guard => guard.day === day.day);
                                 guardsForDay.forEach(guard => {
-                                    embed.fields.push({ name: `${guard.hour.toString().padStart(2, '0')} - ${(guard.hour + 1).toString().padStart(2, '0')}`, value: `**${guard.player}**` });
+                                    const startHour = guard.hour.toString().padStart(2, '0');
+                                    const endHour = (guard.hour + 1).toString().padStart(2, '0');
+                                    embed.fields.push({ name: `${startHour} - ${endHour}`, value: `**${guard.player}**` });
                                 });
 
 
