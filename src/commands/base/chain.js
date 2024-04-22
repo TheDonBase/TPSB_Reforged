@@ -28,7 +28,6 @@ module.exports = {
                     title: `Chain Details - ${day.day}`,
                     fields: [
                         { name: 'Chain ID', value: chain.id, inline: true },
-                        { name: 'Date', value: day.date, inline: true }
                     ]
                 };
 
