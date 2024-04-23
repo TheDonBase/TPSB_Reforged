@@ -19,11 +19,15 @@ module.exports = {
             const amountOption = interaction.options.getString('amount');
             if (isNaN(amountOption) && amountOption.toLocaleLowerCase() === 'all') {
                 await banker_channel.send(`${banker_role} ${userMention(interaction.user.id)} Wants to withdraw **All** Of his cash from the faction bank!`);
+                interaction.reply("I have notified the bankers :)")
             } else if (!isNaN(amountOption) && amountOption >= 0) {
                 await banker_channel.send(`${banker_role} ${userMention(interaction.user.id)} Wants to withdraw **$${formatNumberWithCommas(amountOption)}** Of their cash from the faction bank!`);
-            }   
+                interaction.reply("I have notified the bankers :)")
+            }
+            interaction.reply("Something weird is going on, please let TheDonBase know so he can investigate")
         } catch (error) {
             Logger.error(`There was an error executing ${this.data.name} with error: ${error}`);
+            interaction.reply("There was an unexpected error :( please contact TheDonBase")
         }
     },
 };
