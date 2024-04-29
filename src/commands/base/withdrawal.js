@@ -24,7 +24,10 @@ module.exports = {
                 await banker_channel.send(`${banker_role} ${userMention(interaction.user.id)} Wants to withdraw **$${formatNumberWithCommas(amountOption)}** Of their cash from the faction bank!`);
                 interaction.reply("I have notified the bankers :)")
             }
-            interaction.reply("Something weird is going on, please let TheDonBase know so he can investigate")
+            if(!isNaN(amountOption) && amountOption === 0) {
+                interaction.reply("You seem to be wanting to withdraw ***0***$ is that really right?")
+            }
+            interaction.reply("Done :)")
         } catch (error) {
             Logger.error(`There was an error executing ${this.data.name} with error: ${error}`);
             interaction.reply("There was an unexpected error :( please contact TheDonBase")
