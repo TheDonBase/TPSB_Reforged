@@ -5,21 +5,33 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 module.exports = {
     data: new SlashCommandBuilder()
-    .setName('check-users')
-    .setDescription('Compare users to database')
-    .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-    .setDMPermission(false),
+        .setName('check-users')
+        .setDescription('Compare users to database')
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
+        .setDMPermission(false),
     async execute(interaction) {
-        const execution_chamber = interaction.guild.channels.cache.get('731989414531563603');
         const guild = interaction.guild;
+        const welcomeChannelId = '1166857299294429285';
         const peace_faction = 8322;
         const db = new Database();
         const apiKeyResponse = await db.getApiKey('peace');
         const apiKeyArray = JSON.parse(apiKeyResponse);
         let verifiedPeaceMembers = 0;
+        const nicknameFormatRegex = /\[\d+\]/; // Regex to match [digits] format
         let peace_members;
 
         try {
+            const welcomeChannel = await guild.channels.fetch(welcomeChannelId);
+
+            if (!welcomeChannel || !welcomeChannel.isTextBased()) {
+                return interaction.reply('This channel is either not found or not a text channel.');
+            }
+
+            const membersInChannel = await guild.members.fetch();
+            const allGuildMembers = membersInChannel
+                .filter(member => welcomeChannel.members.has(member.id) && !member.user.bot)
+                .map(member => member.displayName);
+
             const verifiedMessage = await processMembers(apiKeyArray[0].api_key);
 
             // Create a rich embed
@@ -36,13 +48,16 @@ module.exports = {
                 timestamp: new Date(),
             };
 
-            // Get non-affiliated members
-            const allGuildMembers = guild.members.cache.map(member => member.displayName);
             const nonAffiliatedMembers = [];
+
             for (const nickname of allGuildMembers) {
                 const tornId = await extractTornIdFromNickname(nickname);
-                Logger.debug(tornId);
-                if (tornId && !(peace_members.includes(tornId))) {
+                if(tornId) {
+                    Logger.info(`${nickname} has the userId of: ${tornId}`)
+                } else {
+                    Logger.info(`${nickname} has no userId.`)
+                }
+                if (!peace_members.includes(tornId) || !nicknameFormatRegex.test(nickname)) {
                     nonAffiliatedMembers.push(nickname);
                 }
             }
@@ -64,10 +79,9 @@ module.exports = {
 
             await interaction.reply({ embeds: [embed] });
         } catch (error) {
-            Logger.error(`Error proccessing members: ${error}`);
+            Logger.error(`Error processing members: ${error}`);
             await interaction.reply('Error occurred while checking users.');
         }
-
 
         async function processMembers(api_key) {
             Logger.info("Processing members");
@@ -76,18 +90,12 @@ module.exports = {
             const peace_json = await peace_data.json();
             peace_members = Object.keys(peace_json.members);
 
-            for (const [_, member] of guild.members.cache) {
-                const nickname = member.displayName;
-                const tornId = await extractTornIdFromNickname(nickname);
-
-                if (tornId) {
-                     if (peace_members.includes(tornId)) {
-                        verifiedPeaceMembers++;
-                    }
+            for (const member of peace_members) {
+                if (member) {
+                    verifiedPeaceMembers++;
                 }
             }
-            let verified_members = `Verified Members in discord ${verifiedPeaceMembers} out of ${peace_members.length}`
-            return verified_members;
+            return `Verified Members in discord ${verifiedPeaceMembers} out of ${peace_members.length}`;
         }
 
         async function extractTornIdFromNickname(nickname) {

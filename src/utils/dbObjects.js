@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const Logger = require('./logger');
 const {DataTypes} = require("sequelize");
 
-const sequelize = new Sequelize("mysql://TheDonBasse:x@8R2m9h9@95.98.221.175:3306/tpsb", {
+const sequelize = new Sequelize("", {
     logging: Logger.debug.bind(Logger)
 });
 

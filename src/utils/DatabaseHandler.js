@@ -24,16 +24,24 @@ class Database {
 
     async getApiKey(faction_type) {
         try {
-            Logger.info("Retreiving API Key.");
-            const sql = `SELECT api_key from api_keys WHERE faction = '${faction_type}'`;
-            let result = await this.query(sql);
+            Logger.info("Retrieving API Key.");
+            const sql = `SELECT api_key FROM api_keys WHERE faction = ?`;
+            const result = await this.query(sql, [faction_type]); // Use parameterized queries to prevent SQL injection
             Logger.info(`Retrieved api key: ${JSON.stringify(result)}`);
-            return JSON.stringify(result);
+    
+            // Check if the result is valid and has an api_key
+            if (Array.isArray(result) && result.length > 0) {
+                return JSON.stringify(result); // Return the api_key as a JSON string
+            } else {
+                Logger.warn(`No API key found for faction: ${faction_type}`);
+                return null; // Return null if no key is found
+            }
         } catch (error) {
             Logger.error(`Error retrieving API Key: ${error}`);
-            throw error;
+            throw error; // Rethrow the error after logging
         }
     }
+    
 
     async query(sql, values) {
         return new Promise((resolve, reject) => {

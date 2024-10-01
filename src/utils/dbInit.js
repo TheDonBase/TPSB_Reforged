@@ -1,7 +1,33 @@
-const Sequelize = require("sequelize");
-const config = require('./seq_config.json');
+const { Sequelize } = require('sequelize');
+const config = require('../config/config.js'); // Import the config
+const environment = process.env.NODE_ENV || 'development'; // Default to 'development' if NODE_ENV is not set
+const dbConfig = config[environment];
+const Logger = require('../utils/logger.js');
+let sequelize;
 
-const sequelize = new Sequelize(config.production);
+Logger.info(t)
+try {
+    Logger.info('Attempting to create Sequilize...')
+    // Initialize the Sequelize instance with the appropriate config
+    sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
+      host: dbConfig.host,
+      port: 3306,
+      dialect: dbConfig.dialect,
+      logging: dbConfig.logging,  // Disable logging if set to false
+    });
+  
+    Logger.log('Attempting to connect to the database...');
+  
+    // Test the database connection
+    sequelize.authenticate().then(() => {
+      console.log('Connection has been established successfully.');
+    }).catch(err => {
+      console.error('Unable to connect to the database:', err);
+    });
+  
+  } catch (error) {
+    console.error('Sequelize initialization failed:', error);
+  }
 
 const CurrencyShop = require('../models/CurrencyShop.js')(sequelize, Sequelize.DataTypes);
 require('../models/Users.js')(sequelize, Sequelize.DataTypes);
