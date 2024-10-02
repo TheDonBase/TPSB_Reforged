@@ -43,7 +43,7 @@ function setupRoutesForPublicDir(directory, app) {
                 res.sendFile(fullPath);
             });
 
-            console.log(`Route created: ${routePath} -> ${fullPath}`);
+            Logger.info(`Route created: ${routePath} -> ${fullPath}`);
         }
     });
 }
