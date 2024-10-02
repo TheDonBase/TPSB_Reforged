@@ -48,33 +48,6 @@ module.exports = {
             return interaction.reply("Bots are not allowed to identify.");
         }
 
-        const hasMemberRole = interaction.member.roles.cache.has(member_role);
-        const hasGiveawayRole = interaction.member.roles.cache.has(giveaway_role);
-
-        if (!hasMemberRole) {
-            await interaction.member.roles.add(member_role);
-            Logger.info("Added Member Role");
-        }
-
-        if (!hasGiveawayRole) {
-            await interaction.member.roles.add(giveaway_role);
-            Logger.info("Added Giveaway Role");
-        }
-
-        // Check if username contains digits
-        const newUsername = `${interaction.user.username} [${parsed_id}]`;
-        if (/\d/.test(interaction.user.username)) {
-            return interaction.reply("Your username makes it seem like you are already identified, what are you trying to achieve?");
-        }
-
-        if (parsed_id === 1142705) {
-            return interaction.reply("No-uuuuh you naughty boy, don't even try it. Or it will be the Execution Chamber for you!");
-        }
-
-        if (!Number.isInteger(parsed_id)) {
-            return interaction.reply("Please provide a valid Torn ID.");
-        }
-
         try {
             const api_url = `https://api.torn.com/user/${torn_id}?selections=&key=${api_key}`;
             const response = await fetch(api_url);
@@ -86,7 +59,35 @@ module.exports = {
 
             if (data.faction.faction_id !== 8322) {
                 return interaction.reply(`Something went wrong, you are not part of the required faction. Please poke ${userMention(232126269284810753)} Cleanup in Aisle 3!`);
+            } 
+
+            const hasMemberRole = interaction.member.roles.cache.has(member_role);
+            const hasGiveawayRole = interaction.member.roles.cache.has(giveaway_role);
+
+            if (!hasMemberRole) {
+                await interaction.member.roles.add(member_role);
+                Logger.info("Added Member Role");
             }
+
+            if (!hasGiveawayRole) {
+                await interaction.member.roles.add(giveaway_role);
+                Logger.info("Added Giveaway Role");
+            }
+
+            // Check if username contains digits
+            const newUsername = `${data.name} [${parsed_id}]`;
+            if (/\[\d+\]/.test(interaction.member.nickname)) {
+                return interaction.reply("Your username makes it seem like you are already identified, what are you trying to achieve?");
+            }
+
+            if (parsed_id === 1142705) {
+                return interaction.reply("No-uuuuh you naughty boy, don't even try it. Or it will be the Execution Chamber for you!");
+            }
+
+            if (!Number.isInteger(parsed_id)) {
+                return interaction.reply("Please provide a valid Torn ID.");
+            }
+
 
             // Update the nickname
             await interaction.member.setNickname(newUsername);
