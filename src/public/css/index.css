@@ -21,6 +21,7 @@ main {
 .sendMessage {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .sendMessage form {
@@ -35,9 +36,10 @@ main {
 }
 
 .sendMessage form button{
+    margin-top: 20px;
     padding: 5px;
     width: 125px;
-    border-radius: 25px;
+    border-radius: 10px;
 }
 
 .statistics {
