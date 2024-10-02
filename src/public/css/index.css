@@ -22,6 +22,11 @@ main {
     flex-direction: column;
 }
 
+.sendMessage form {
+    display: flex;
+    flex-direction: column;
+}
+
 .statistics {
     background: #fff;
     border-radius: 5px;

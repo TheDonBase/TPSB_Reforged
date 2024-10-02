@@ -31,7 +31,15 @@ async function fetchStats() {
 
         document.getElementById('server-name').innerText = stats.serverName;
         document.getElementById('member-count').innerText = stats.memberCount;
-        document.getElementById('server-status').innerText = stats.serverStatus;
+        const serverStatusElement = document.getElementById('server-status');
+        serverStatusElement.textContent = data.serverStatus;
+
+        // Change color based on server status
+        if (data.serverStatus === 'Online') {
+            serverStatusElement.style.color = 'green'; // Green for Online
+        } else {
+            serverStatusElement.style.color = 'red'; // Red for Offline
+        }
         document.getElementById('uptime').innerText = `${Math.floor(stats.uptime / 60)} minutes`;
         document.getElementById('ping').innerText = `${stats.ping} ms`;
     } catch (error) {
