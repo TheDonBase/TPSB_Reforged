@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #0c0c0c;
+}
+
+header {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+main {
+    display:flex;
+    flex-direction: column;
+}
+
+.sendMessage {
+    display: flex;
+    flex-direction: column;
+}
+
+.statistics {
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#stats {
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+}
