@@ -27,10 +27,11 @@
         async function fetchStats() {
             try {
                 const response = await fetch('/api/stats');
-                const stats = await response.json();
+                const data = await response.json();
 
-                document.getElementById('server-name').innerText = stats.serverName;
-                document.getElementById('member-count').innerText = stats.memberCount;
+                document.getElementById('server-name').textContent = data.serverName;
+                document.getElementById('member-count').textContent = data.memberCount;
+
                 const serverStatusElement = document.getElementById('server-status');
                 serverStatusElement.textContent = data.serverStatus;
 
@@ -41,8 +42,8 @@
                     serverStatusElement.style.color = 'red'; // Red for Offline
                 }
 
-                document.getElementById('uptime').innerText = `${Math.floor(stats.uptime / 60)} minutes`;
-                document.getElementById('ping').innerText = `${stats.ping} ms`;
+                document.getElementById('uptime').textContent = Math.round(data.uptime);
+                document.getElementById('ping').textContent = data.ping;
             } catch (error) {
                 console.error('Error fetching stats:', error);
             }
