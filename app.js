@@ -25,6 +25,32 @@ const port = 8080;
 
 app.use(express.json());
 
+function setupRoutesForPublicDir(directory, app) {
+    fs.readdirSync(directory).forEach((file) => {
+        const fullPath = path.join(directory, file);
+        const stat = fs.statSync(fullPath);
+
+        if (stat.isDirectory()) {
+            // If it's a directory, recursively process its contents
+            setupRoutesForPublicDir(fullPath, app);
+        } else if (path.extname(file) === '.html') {
+            // If it's an HTML file, create a route
+            const relativePath = fullPath.replace(path.join(__dirname, 'src/public'), '');
+            const routePath = relativePath.replace(/\\/g, '/').replace(/\.html$/, '');
+
+            // Serve the HTML file at the generated route
+            app.get(routePath, (req, res) => {
+                res.sendFile(fullPath);
+            });
+
+            console.log(`Route created: ${routePath} -> ${fullPath}`);
+        }
+    });
+}
+
+// Setup routes for all HTML files in the src/public directory
+setupRoutesForPublicDir(path.join(__dirname, 'src/public'), app);
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
 });
