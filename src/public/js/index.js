@@ -42,7 +42,7 @@
                     serverStatusElement.style.color = 'red'; // Red for Offline
                 }
 
-                document.getElementById('uptime').textContent = Math.round(data.uptime);
+                document.getElementById('uptime').textContent = `${Math.floor(data.uptime / 60)} minutes`;
                 document.getElementById('ping').textContent = data.ping;
             } catch (error) {
                 console.error('Error fetching stats:', error);
