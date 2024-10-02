@@ -57,23 +57,28 @@
             e.preventDefault();
             const channelId = document.getElementById('channelId').value;
             const message = document.getElementById('message').value;
-
-            const response = await fetch('/api/send-message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ channelId, message })
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                alert('Message sent!');
-            } else {
-                alert('Error sending message');
+        
+            try {
+                const response = await fetch('/api/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ channelId, message })
+                });
+        
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+        
+                const result = await response.json();
+                alert(result.success ? 'Message sent!' : 'Error sending message');
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('An error occurred.');
             }
         });
-        
+
         async function fetchStats() {
             try {
                 const response = await fetch('/api/stats');

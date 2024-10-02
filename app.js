@@ -29,6 +29,20 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
 });
 
+app.post('/api/send-message', async (req, res) => {
+    Logger.debug(`Request Body: ${req.body}`)
+    const { channelId, message } = req.body;
+
+    try {
+        const channel = await client.channels.fetch(channelId);
+        await channel.send(message);
+        res.status(200).send({ success: true });
+    } catch (error) {
+        Logger.error(`Error sending message: ${error}`);
+        res.status(500).send({ error: 'Failed to send message' });
+    }
+});
+
 app.get('/api/stats', async (req, res) => {
     try {
         const guild = client.guilds.cache.get('731431228959490108'); // Replace with your guild (server) ID
