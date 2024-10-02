@@ -24,7 +24,7 @@ const app = express();
 const port = 8080;
 
 app.use(express.json());
-app.use(express.static("public"))
+app.use(express.static("src/public"))
 
 function setupRoutesForPublicDir(directory, app) {
     fs.readdirSync(directory).forEach((file) => {
