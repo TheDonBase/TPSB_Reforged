@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Stats</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #stats {
+            margin-top: 20px;
+        }
+        .stat-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sendMessage">
+        <h1>Send a Message to Discord</h1>
+        <form id="messageForm">
+            <input type="text" id="channelId" placeholder="Channel ID" required />
+            <textarea id="message" placeholder="Enter your message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+    <div class="statistics">
+
+    </div>
+    <h1>Discord Bot Statistics</h1>
+
+    <div id="stats">
+        <div class="stat-item">
+            <strong>Server Name:</strong> <span id="server-name">Loading...</span>
+        </div>
+        <div class="stat-item">
+            <strong>Member Count:</strong> <span id="member-count">Loading...</span>
+        </div>
+        <div class="stat-item">
+            <strong>Server Status:</strong> <span id="server-status">Loading...</span>
+        </div>
+        <div class="stat-item">
+            <strong>Bot Uptime:</strong> <span id="uptime">Loading...</span>
+        </div>
+        <div class="stat-item">
+            <strong>Ping:</strong> <span id="ping">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('messageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const channelId = document.getElementById('channelId').value;
+            const message = document.getElementById('message').value;
+
+            const response = await fetch('/api/send-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ channelId, message })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Message sent!');
+            } else {
+                alert('Error sending message');
+            }
+        });
+        
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+
+                document.getElementById('server-name').innerText = stats.serverName;
+                document.getElementById('member-count').innerText = stats.memberCount;
+                document.getElementById('server-status').innerText = stats.serverStatus;
+                document.getElementById('uptime').innerText = `${Math.floor(stats.uptime / 60)} minutes`;
+                document.getElementById('ping').innerText = `${stats.ping} ms`;
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        // Fetch stats every 5 seconds
+        setInterval(fetchStats, 5000);
+
+        // Fetch stats on page load
+        fetchStats();
+    </script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+const express = require('express');
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
@@ -18,6 +19,44 @@ const client = new Client({ intents: [
     Partials.Message
 ]
 });
+
+const app = express();
+const port = 8080;
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
+});
+
+app.get('/api/stats', async (req, res) => {
+    try {
+        const guild = client.guilds.cache.get('731431228959490108'); // Replace with your guild (server) ID
+        if (!guild) return res.status(404).send({ error: 'Guild not found' });
+
+        const memberCount = guild.memberCount;
+        const serverName = guild.name;
+        const serverStatus = client.ws.status; // WebSocket status (0 = connected)
+
+        const stats = {
+            serverName,
+            memberCount,
+            serverStatus: serverStatus === 0 ? 'Online' : 'Offline',
+            uptime: process.uptime(),
+            ping: client.ws.ping
+        };
+
+        res.status(200).json(stats);
+    } catch (error) {
+        Logger.error(`Error fetching stats: ${error}`);
+        res.status(500).json({ error: 'Failed to fetch stats' });
+    }
+});
+
+
+app.listen(port, () => {
+    Logger.info(`Webinterface running at http://localhost:${port}`);
+})
 
 client.currency = new Collection();
 
