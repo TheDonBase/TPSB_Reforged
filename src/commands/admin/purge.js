@@ -15,6 +15,8 @@ module.exports = {
         let kickedUsers = 0;
         let kickedNames = [];
 
+        interaction.reply('Purge started please wait.')
+
         try {
             const generalChannel = await guild.channels.fetch(generalChannelId);
             await generalChannel.send({
@@ -34,7 +36,7 @@ module.exports = {
                 content: `:rotating_light: The Server has been purged! ${kickedUsers} members have been purged! :rotating_light:\nKicked Users: ${kickedList}`
             });
 
-            await interaction.reply(`Successfully purged the faction. Purged ${kickedUsers} users out of ${guild.memberCount}!\nKicked Users: ${kickedList}`);
+            await interaction.editReply(`Successfully purged the faction. Purged ${kickedUsers} users out of ${guild.memberCount}!\nKicked Users: ${kickedList}`);
         } catch (error) {
             Logger.error(`Error kicking users: ${error}`);
             await interaction.reply('Error occurred while purging users.');

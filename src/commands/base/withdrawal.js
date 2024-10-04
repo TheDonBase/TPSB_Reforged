@@ -25,6 +25,8 @@ module.exports = {
                 await bankerChannel.send(`${bankerRoleMention} ${userMention(interaction.user.id)} wants to withdraw **All** of their cash from the faction bank!`);
             } else if (!isNaN(amountOption) && parseFloat(amountOption) >= 0) {
                 await bankerChannel.send(`${bankerRoleMention} ${userMention(interaction.user.id)} wants to withdraw **$${formatNumberWithCommas(amountOption)}** of their cash from the faction bank!`);
+            } else if (amountOption.toLowerCase().endsWith('k') || amountOption.toLowerCase().endsWith('m')) {
+                await bankerChannel.send(`${bankerRoleMention} ${userMention(interaction.user.id)} wants to withdraw **${amountOption}** of their cash from the faction bank!`);
             } else if (!isNaN(amountOption) && parseFloat(amountOption) === 0) {
                 await interaction.reply("You seem to want to withdraw ***0***$. Is that correct?");
                 return;
