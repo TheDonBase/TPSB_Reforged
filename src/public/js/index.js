@@ -32,6 +32,7 @@ async function fetchStats() {
 
         document.getElementById('uptime').textContent = `${Math.floor(data.uptime / 60)} minutes`;
         document.getElementById('ping').textContent = data.ping;
+        document.getElementById('sent').textContent = data.sent;
 
     } catch (error) {
         console.error('Error fetching stats:', error);
