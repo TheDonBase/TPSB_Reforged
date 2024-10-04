@@ -99,6 +99,7 @@ async function updateBotStats() {
         serverStatus: client.ws.status === 0 ? 'Online' : 'Offline',
         uptime: process.uptime(),
         ping: client.ws.ping,
+        sent: new Date().toISOString()
     };
 
     // Instead of just setting it in Redis, publish to a channel
