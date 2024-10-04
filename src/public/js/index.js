@@ -48,11 +48,11 @@ async function fetchCommandLog() {
         console.log(`Response status: ${response.status}`);
         
         if (!response.ok) {
-            console.error('Failed to fetch stats:', response.statusText);
+            console.error('Failed to fetch command logs:', response.statusText);
             return; // Exit if the response is not OK
         }
 
-        const data = await response.json();
+        const data = await response.json(); // This contains the command logs
 
         // Log the retrieved data
         console.log('Retrieved data:', data);
@@ -63,7 +63,7 @@ async function fetchCommandLog() {
         commandLogList.innerHTML = '';
 
         // Loop through the command logs and create list items
-        commandLogs.forEach(log => {
+        data.forEach(log => { // Changed this line to loop over 'data'
             const listItem = document.createElement('li');
             listItem.textContent = `${log.timestamp} - ${log.user} executed command: ${log.commandName}`; // Format the log entry
             commandLogList.appendChild(listItem);
@@ -73,6 +73,7 @@ async function fetchCommandLog() {
         console.error('Error fetching command logs:', error);
     }
 }
+
 
 // Fetch stats every 60 seconds
 setInterval(fetchStats, 60000);
