@@ -11,6 +11,7 @@ module.exports = {
     async execute(interaction) {
         const generalChannelId = '731431228959490111';
         const guild = interaction.guild;
+        const db = new Database();
         let kickedUsers = 0;
         let kickedNames = [];
 
