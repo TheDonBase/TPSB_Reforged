@@ -102,8 +102,8 @@ async function updateBotStats() {
     };
 
     // Instead of just setting it in Redis, publish to a channel
-    await redisService.set('botStats', stats);
-    await redisService.publish('botStatsChannel', stats);
+    await client.redisService.set('botStats', stats);
+    await client.redisService.publish('botStatsChannel', stats);
 }
 // Update stats every 30 seconds
 setInterval(updateBotStats, 30000);
