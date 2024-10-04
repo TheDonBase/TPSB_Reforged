@@ -2,26 +2,12 @@ const express = require('express');
 const fs = require('node:fs');
 const path = require('node:path');
 const Logger = require('./src/utils/logger.js');
-const redis = require('redis');
-
+const RedisService = require('./src/utils/RedisService.js');
 const app = express();
 const port = 8080;
 
-// Create Redis client and connect
-const client = redis.createClient();
-
-client.on('error', (err) => {
-    Logger.error('Redis error: ' + err);
-});
-
-(async () => {
-    try {
-        await client.connect();
-        Logger.info('Connected to Redis');
-    } catch (err) {
-        Logger.error('Could not connect to Redis: ' + err);
-    }
-})();
+// Initialize Redis Service
+const redisService = new RedisService();
 
 app.use(express.json());
 app.use(express.static("src/public"));
@@ -59,41 +45,29 @@ app.get('/', (req, res) => {
 
 // Endpoint to get bot stats
 app.get('/api/stats', async (req, res) => {
-    Logger.info("API Endpoint reached.");
-    // Check if the Redis client is connected
-    if (!client.isOpen) {
-        Logger.error('Redis client is not connected. Attempting to reconnect...');
-        try {
-            await client.connect();
-        } catch (err) {
-            Logger.error('Could not reconnect to Redis: ' + err);
-            return res.status(500).send({ error: 'Failed to fetch stats' });
-        }
-    }
+    try {
+        Logger.info("API Endpoint reached.");
+        const stats = await redisService.get('botStats');
 
-    client.get('botStats', (err, stats) => {
-        Logger.info('Retrieving Stats.')
-        if (err) {
-            Logger.error('Error fetching stats from Redis: ' + err);
-            return res.status(500).send({ error: 'Failed to fetch stats' });
-        }
         if (!stats) {
             Logger.warn('No stats found in Redis.');
             return res.status(404).send({ error: 'No stats available' });
         }
-        Logger.info(`Sending response with data: ${JSON.stringify(stats)}`)
-        res.status(200).json(JSON.parse(stats));
-    });
+
+        res.status(200).json(stats);
+    } catch (err) {
+        Logger.error('Error fetching stats from Redis: ' + err);
+        res.status(500).send({ error: 'Failed to fetch stats' });
+    }
+});
+
+redisService.subscribe('botStatsChannel', (stats) => {
+    // Assuming you have a function to update the page with new stats
+    Logger.info('Received bot stats via pub/sub');
+    // Send the stats via WebSocket to the client, or directly update in-memory data
 });
 
 // Start the server
 app.listen(port, () => {
     Logger.info(`Web interface running at http://localhost:${port}`);
-});
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-    await client.quit();
-    Logger.info('Redis client disconnected on application shutdown.');
-    process.exit(0);
 });

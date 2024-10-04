@@ -6,6 +6,7 @@ const Logger = require('./src/utils/logger.js');
 const ErrorHandler = require('./src/utils/ErrorHandler.js');
 const CurrencyHelper = require('./src/utils/CurrencyHelper.js');
 const redis = require('redis');
+const RedisService = require('./src/utils/RedisService.js');
 
 const client = new Client({
     intents: [
@@ -22,22 +23,7 @@ const client = new Client({
     ]
 });
 
-// Create Redis client
-client.redis = redis.createClient();
-
-client.redis.on('error', (err) => {
-    Logger.error('Redis error: ' + err);
-});
-
-// Connect the Redis client
-(async () => {
-    try {
-        await client.redis.connect();
-        Logger.info('Connected to Redis');
-    } catch (err) {
-        Logger.error('Could not connect to Redis: ' + err);
-    }
-})();
+client.redisService = new RedisService();
 
 client.currency = new Collection();
 client.commands = new Collection();
@@ -105,19 +91,7 @@ client.errorHandler = new ErrorHandler(client);
 
 Logger.info(`Added CurrencyHelper`);
 
-// Update bot stats every 30 seconds
 async function updateBotStats() {
-    // Check if the Redis client is connected
-    if (!client.redis.isOpen) {
-        Logger.error('Redis client is not connected. Attempting to reconnect...');
-        try {
-            await client.redis.connect();
-        } catch (err) {
-            Logger.error('Could not reconnect to Redis: ' + err);
-            return; // Exit the function if we can't reconnect
-        }
-    }
-
     const guild = client.guilds.cache.get('731431228959490108');
     const stats = {
         serverName: guild ? guild.name : null,
@@ -127,22 +101,11 @@ async function updateBotStats() {
         ping: client.ws.ping,
     };
 
-    try {
-        await client.redis.set('botStats', JSON.stringify(stats));
-        Logger.info('Updated Redis with bot stats');
-    } catch (err) {
-        Logger.error('Error updating Redis: ' + err);
-    }
+    // Instead of just setting it in Redis, publish to a channel
+    await redisService.set('botStats', stats);
+    await redisService.publish('botStatsChannel', stats);
 }
-
 // Update stats every 30 seconds
 setInterval(updateBotStats, 30000);
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-    await client.redis.quit();
-    Logger.info('Redis client disconnected on application shutdown.');
-    process.exit(0);
-});
 
 client.login(token);
