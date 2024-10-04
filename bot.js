@@ -6,25 +6,42 @@ const Logger = require('./src/utils/logger.js');
 const ErrorHandler = require('./src/utils/ErrorHandler.js');
 const CurrencyHelper = require('./src/utils/CurrencyHelper.js');
 const redis = require('redis');
-const redisClient = redis.createClient();
- 
-const client = new Client({ intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildPresences
-],
+
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildPresences
+    ],
     partials: [
-    Partials.Channel,
-    Partials.Message
-]
+        Partials.Channel,
+        Partials.Message
+    ]
 });
 
-client.currency = new Collection();
+// Create Redis client
+client.redis = redis.createClient();
 
+client.redis.on('error', (err) => {
+    Logger.error('Redis error: ' + err);
+});
+
+// Connect the Redis client
+(async () => {
+    try {
+        await client.redis.connect();
+        Logger.info('Connected to Redis');
+    } catch (err) {
+        Logger.error('Could not connect to Redis: ' + err);
+    }
+})();
+
+client.currency = new Collection();
 client.commands = new Collection();
+
 const foldersPath = path.join(__dirname, 'src/commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -50,9 +67,9 @@ const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'
 for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);
     const event = require(filePath);
-    if('name' in event && 'execute' in event) {
+    if ('name' in event && 'execute' in event) {
         client.events.set(event.name, event);
-    } 
+    }
     if (event.once) {
         client.once(event.name, (...args) => event.execute(...args, client));
         Logger.info(`Running Event: ${event.name}`);
@@ -65,13 +82,13 @@ for (const file of eventFiles) {
 const files = fs.readdirSync('./src/cronJobs');
 
 if (!files) {
-    Logger.error('missing files')
+    Logger.error('Missing files');
     return;
 }
 
 let jsFiles = files.filter(f => f.split('.').pop() === 'js');
 
-if(jsFiles.length <= 0) {
+if (jsFiles.length <= 0) {
     return;
 }
 
@@ -79,17 +96,28 @@ Logger.info(`Loading ${jsFiles.length} cron jobs`);
 
 jsFiles.forEach((f, i) => {
     let props = require(`./src/cronJobs/${f}`);
-    Logger.info(`${i + 1}: ${f} loaded.`)
+    Logger.info(`${i + 1}: ${f} loaded.`);
     props(client);
 });
-
 
 client.currency_helper = new CurrencyHelper(client);
 client.errorHandler = new ErrorHandler(client);
 
-Logger.info(`Added CurrencyHelper`)
+Logger.info(`Added CurrencyHelper`);
 
+// Update bot stats every 30 seconds
 async function updateBotStats() {
+    // Check if the Redis client is connected
+    if (!client.redis.isOpen) {
+        Logger.error('Redis client is not connected. Attempting to reconnect...');
+        try {
+            await client.redis.connect();
+        } catch (err) {
+            Logger.error('Could not reconnect to Redis: ' + err);
+            return; // Exit the function if we can't reconnect
+        }
+    }
+
     const guild = client.guilds.cache.get('731431228959490108');
     const stats = {
         serverName: guild ? guild.name : null,
@@ -98,11 +126,23 @@ async function updateBotStats() {
         uptime: process.uptime(),
         ping: client.ws.ping,
     };
-    await redisClient.set('botStats', JSON.stringify(stats));
-    Logger.info('Updating Redis');
+
+    try {
+        await client.redis.set('botStats', JSON.stringify(stats));
+        Logger.info('Updated Redis with bot stats');
+    } catch (err) {
+        Logger.error('Error updating Redis: ' + err);
+    }
 }
 
 // Update stats every 30 seconds
 setInterval(updateBotStats, 30000);
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+    await client.redis.quit();
+    Logger.info('Redis client disconnected on application shutdown.');
+    process.exit(0);
+});
 
 client.login(token);

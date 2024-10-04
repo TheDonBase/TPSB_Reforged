@@ -3,14 +3,30 @@ const fs = require('node:fs');
 const path = require('node:path');
 const Logger = require('./src/utils/logger.js');
 const redis = require('redis');
-const client = redis.createClient();
 
 const app = express();
 const port = 8080;
 
-app.use(express.json());
-app.use(express.static("src/public"))
+// Create Redis client and connect
+const client = redis.createClient();
 
+client.on('error', (err) => {
+    Logger.error('Redis error: ' + err);
+});
+
+(async () => {
+    try {
+        await client.connect();
+        Logger.info('Connected to Redis');
+    } catch (err) {
+        Logger.error('Could not connect to Redis: ' + err);
+    }
+})();
+
+app.use(express.json());
+app.use(express.static("src/public"));
+
+// Function to set up routes for public directory
 function setupRoutesForPublicDir(directory, app) {
     fs.readdirSync(directory).forEach((file) => {
         const fullPath = path.join(directory, file);
@@ -41,17 +57,40 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
 });
 
+// Endpoint to get bot stats
 app.get('/api/stats', async (req, res) => {
+    // Check if the Redis client is connected
+    if (!client.isOpen) {
+        Logger.error('Redis client is not connected. Attempting to reconnect...');
+        try {
+            await client.connect();
+        } catch (err) {
+            Logger.error('Could not reconnect to Redis: ' + err);
+            return res.status(500).send({ error: 'Failed to fetch stats' });
+        }
+    }
+
     client.get('botStats', (err, stats) => {
         if (err) {
-            Logger.error('Error fetching stats from Redis');
+            Logger.error('Error fetching stats from Redis: ' + err);
             return res.status(500).send({ error: 'Failed to fetch stats' });
+        }
+        if (!stats) {
+            Logger.warn('No stats found in Redis.');
+            return res.status(404).send({ error: 'No stats available' });
         }
         res.status(200).json(JSON.parse(stats));
     });
 });
 
-
+// Start the server
 app.listen(port, () => {
-    Logger.info(`Webinterface running at http://localhost:${port}`);
-})
+    Logger.info(`Web interface running at http://localhost:${port}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+    await client.quit();
+    Logger.info('Redis client disconnected on application shutdown.');
+    process.exit(0);
+});

@@ -22,6 +22,7 @@
   "author": "TheDonBase",
   "license": "ISC",
   "dependencies": {
+    "canvas": "^2.11.2",
     "discord.js": "^14.12.1",
     "express": "^4.21.0",
     "fetch": "^1.1.0",
