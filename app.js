@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 // Endpoint to get bot stats
 app.get('/api/stats', async (req, res) => {
     try {
-        Logger.info("API Endpoint reached.");
+        Logger.info("Stats API Endpoint reached.");
         const stats = await redisService.get('botStats');
 
         if (!stats) {
@@ -70,7 +70,32 @@ app.get('/api/stats', async (req, res) => {
     }
 });
 
+app.get('/api/commands', async (req, res) => {
+    try {
+        Logger.info("Commands API Endpoint reached.");
+        const stats = await redisService.get('lastCommands');
+
+        if (!stats) {
+            Logger.warn('No stats found in Redis.');
+            return res.status(404).send({ error: 'No stats available' });
+        }
+       
+
+        res.status(200).json(stats);
+    } catch (err) {
+        Logger.error('Error fetching stats from Redis: ' + err);
+        res.status(500).send({ error: 'Failed to fetch stats' });
+    }
+});
+
+
 redisService.subscribe('botStatsChannel', (stats) => {
+    // Assuming you have a function to update the page with new stats
+    Logger.info('Received bot stats via pub/sub');
+    // Send the stats via WebSocket to the client, or directly update in-memory data
+});
+
+redisService.subscribe('botCommandsChannel', (stats) => {
     // Assuming you have a function to update the page with new stats
     Logger.info('Received bot stats via pub/sub');
     // Send the stats via WebSocket to the client, or directly update in-memory data

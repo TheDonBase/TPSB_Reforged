@@ -110,4 +110,14 @@ async function updateBotStats() {
 // Update stats every 30 seconds
 setInterval(updateBotStats, 30000);
 
+async function updateBotCommands() {
+    const lastCommands = client.commandLog;
+
+    // Instead of just setting it in Redis, publish to a channel
+    await client.redisService.set('lastCommands', lastCommands);
+    await client.redisService.publish('botCommandsChannel', lastCommands);
+}
+// Update stats every 60 seconds
+setInterval(updateBotCommands, 60000);
+
 client.login(token);
