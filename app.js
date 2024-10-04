@@ -59,6 +59,7 @@ app.get('/', (req, res) => {
 
 // Endpoint to get bot stats
 app.get('/api/stats', async (req, res) => {
+    Logger.info("API Endpoint reached.");
     // Check if the Redis client is connected
     if (!client.isOpen) {
         Logger.error('Redis client is not connected. Attempting to reconnect...');
