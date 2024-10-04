@@ -27,7 +27,7 @@ client.redisService = new RedisService();
 
 client.currency = new Collection();
 client.commands = new Collection();
-client.commandLog = new Collection();
+client.commandLog = [];
 
 const foldersPath = path.join(__dirname, 'src/commands');
 const commandFolders = fs.readdirSync(foldersPath);
