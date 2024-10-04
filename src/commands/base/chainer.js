@@ -9,6 +9,19 @@ module.exports = {
         const member = interaction.member;  // the member who used this command
         const role = member.guild.roles.cache.get(roleId);
 
+        // Log command execution
+        const commandInfo = {
+            commandName: interaction.commandName,
+            user: interaction.user.tag,
+            timestamp: new Date().toISOString(),
+        };
+
+        // Add the command info to the log (limit the array to the last 10 commands)
+        interaction.client.commandLog.push(commandInfo); // Assuming client.commandLog is initialized as an empty array
+        if (interaction.client.commandLog.length > 10) {
+            interaction.client.commandLog.shift(); // Remove the oldest command to keep the array at max 10
+        }
+
         if (!role) {
             return interaction.reply(`Role not found.`);
         }

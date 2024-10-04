@@ -13,6 +13,19 @@ module.exports = {
         const db = new Database();
         const api_key_json = await db.getApiKey('peace');
 
+        // Log command execution
+        const commandInfo = {
+            commandName: interaction.commandName,
+            user: interaction.user.tag,
+            timestamp: new Date().toISOString(),
+        };
+
+        // Add the command info to the log (limit the array to the last 10 commands)
+        interaction.client.commandLog.push(commandInfo); // Assuming client.commandLog is initialized as an empty array
+        if (interaction.client.commandLog.length > 10) {
+            interaction.client.commandLog.shift(); // Remove the oldest command to keep the array at max 10
+        }
+
         if (!api_key_json) {
             Logger.error("No API key found for the specified faction.");
             return interaction.reply("Error: Unable to retrieve API key.");
