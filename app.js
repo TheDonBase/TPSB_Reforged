@@ -72,6 +72,7 @@ app.get('/api/stats', async (req, res) => {
     }
 
     await client.get('botStats', (err, stats) => {
+        Logger.info('Retrieving Stats.')
         if (err) {
             Logger.error('Error fetching stats from Redis: ' + err);
             return res.status(500).send({ error: 'Failed to fetch stats' });
@@ -80,6 +81,7 @@ app.get('/api/stats', async (req, res) => {
             Logger.warn('No stats found in Redis.');
             return res.status(404).send({ error: 'No stats available' });
         }
+        Logger.info(`Sending response with data: ${JSON.stringify(stats)}`)
         res.status(200).json(JSON.parse(stats));
     });
 });
