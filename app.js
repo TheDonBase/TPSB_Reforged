@@ -162,6 +162,8 @@ jsFiles.forEach((f, i) => {
 
 
 client.currency_helper = new CurrencyHelper(client);
+client.errorHandler = new ErrorHandler(client);
+
 Logger.info(`Added CurrencyHelper`)
 
 client.login(token);
