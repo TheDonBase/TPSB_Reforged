@@ -12,20 +12,6 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-
-        const commandInfo = {
-            commandName: interaction.commandName,
-            user: interaction.user.tag,
-            timestamp: new Date().toISOString(),
-        };
-
-        // Add the command info to the log (limit the array to the last 10 commands)
-        interaction.client.commandLog.push(commandInfo); // Assuming client.commandLog is initialized as an empty array
-        if (interaction.client.commandLog.length > 10) {
-            interaction.client.commandLog.shift(); // Remove the oldest command to keep the array at max 10
-        }
-
-
         try {
             const bankerRoleId = '1165659166501785741'; // Update with actual role ID
             const bankerChannelId = '815742620802089000'; // Update with actual channel ID

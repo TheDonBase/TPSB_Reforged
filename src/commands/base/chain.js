@@ -13,18 +13,6 @@ module.exports = {
         const id = interaction.options.getInteger('id');
         const url = `https://croaztek.com/admin/api_get_chain/${id}`;
 
-        // Log command execution
-        const commandInfo = {
-            commandName: interaction.commandName,
-            user: interaction.user.tag,
-            timestamp: new Date().toISOString(),
-        };
-
-        // Add the command info to the log (limit the array to the last 10 commands)
-        interaction.client.commandLog.push(commandInfo); // Assuming client.commandLog is initialized as an empty array
-        if (interaction.client.commandLog.length > 10) {
-            interaction.client.commandLog.shift(); // Remove the oldest command to keep the array at max 10
-        }
         try {
             const response = await fetch(url, {
                 method: 'GET'

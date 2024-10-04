@@ -25,20 +25,6 @@ module.exports = {
         option.setName('reason')
         .setDescription('Tell the person why you want to slap them.')),
     async execute(interaction) {
-
-        const commandInfo = {
-            commandName: interaction.commandName,
-            user: interaction.user.tag,
-            timestamp: new Date().toISOString(),
-        };
-
-        // Add the command info to the log (limit the array to the last 10 commands)
-        interaction.client.commandLog.push(commandInfo); // Assuming client.commandLog is initialized as an empty array
-        if (interaction.client.commandLog.length > 10) {
-            interaction.client.commandLog.shift(); // Remove the oldest command to keep the array at max 10
-        }
-
-
         const target = interaction.options.getUser('target');
         const user = interaction.user;
         const weapon = interaction.options.getString('weapon');
