@@ -71,7 +71,7 @@ app.get('/api/stats', async (req, res) => {
         }
     }
 
-    client.get('botStats', (err, stats) => {
+    await client.get('botStats', (err, stats) => {
         if (err) {
             Logger.error('Error fetching stats from Redis: ' + err);
             return res.status(500).send({ error: 'Failed to fetch stats' });

@@ -38,7 +38,7 @@ async function fetchStats() {
     }
 }
 
-// Fetch stats every 5 seconds
+// Fetch stats every 60 seconds
 setInterval(fetchStats, 60000);
 
 // Fetch stats on page load
