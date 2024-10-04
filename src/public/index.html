@@ -5,46 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Bot Stats</title>
     <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
     <header>
-        <h1>Welcome to My Discord Bot!</h1>
+        <nav>
+            <h1><span class="white">TPSB</span> <span class="black">Reforged</span> Bot</h1>
+            <ol>
+                <li><a href="">Home</a></li>
+                <li><a href="">Settings</a></li>
+                <li><a href="">Status</a></li>
+            </ol>
+        </nav>
     </header>
     <main>
-        <div class="sendMessage">
-            <h1>Send a Message to Discord</h1>
-            <form id="messageForm">
-                <input type="text" id="channelId" placeholder="Channel ID" required />
-                <textarea id="message" placeholder="Enter your message" required></textarea>
-                <button type="submit">Send Message</button>
-            </form>
-        </div>
-        <div class="statistics">
+        <section class="hero">
+            <h1>Welcome to TPSB Reforged Bot</h1>
+            <p>Your ultimate bot for server management and community fun!</p>
+            <a href="#stats" class="cta-button">View Stats</a>
+        </section>
+
+        <div class="statistics" id="stats">
             <h1>Discord Bot Statistics</h1>
-    
-            <div id="stats">
-                <div class="stat-item">
-                    <strong>Server Name:</strong> <span id="server-name">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <strong>Member Count:</strong> <span id="member-count">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <strong>Server Status:</strong> <span id="server-status">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <strong>Bot Uptime:</strong> <span id="uptime">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <strong>Ping:</strong> <span id="ping">Loading...</span>
-                </div>
+            <div class="stat-item">
+                <i class="fas fa-server"></i> <strong>Server Name:</strong> <span id="server-name">Loading...</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-users"></i> <strong>Member Count:</strong> <span id="member-count">Loading...</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-signal"></i> <strong>Server Status:</strong> <span id="server-status">Loading...</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-clock"></i> <strong>Bot Uptime:</strong> <span id="uptime">Loading...</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-wifi"></i> <strong>Ping:</strong> <span id="ping">Loading...</span>
             </div>
         </div>
     </main>
     <footer>
-        <p>&copy; 2024 TPSB Reforged</p>
+        <p>&copy; 2024 TPSB Reforged | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </footer>
-
 
     <script src="js/index.js"></script>
 </body>

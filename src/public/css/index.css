@@ -1,63 +1,137 @@
+/* Fonts and global styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background-color: #0c0c0c;
-}
-
-header {
-    background: #333;
     color: #fff;
-    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.white { color: #fff; }
+.black { color: #0c0c0c; }
+
+/* Header styles */
+header {
+    background: rgba(97, 28, 28, 0.9);
+    color: #fff;
     text-align: center;
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-main {
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.sendMessage {
+header nav {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    padding: 0 20px;
 }
 
-.sendMessage form {
+header nav ol {
+    list-style: none;
     display: flex;
-    flex-direction: column;
-    width: 600px;
+    margin: 0;
+    padding: 0;
 }
 
-.sendMessage form input, textarea {
-    padding: 5px;
-    margin-top: 20px;
+header nav ol li {
+    margin-left: 20px;
 }
 
-.sendMessage form button{
-    margin-top: 20px;
-    padding: 5px;
-    width: 125px;
-    border-radius: 10px;
+header nav ol li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    font-size: 18px;
+    transition: color 0.3s ease;
 }
 
+header nav ol li a:hover {
+    color: #f39c12;
+}
+
+/* Hero section */
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(to bottom, #611c1c, #0c0c0c);
+    color: #fff;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.cta-button {
+    padding: 10px 30px;
+    background-color: #f39c12;
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.cta-button:hover {
+    background-color: #e67e22;
+}
+
+/* Statistics */
 .statistics {
     background: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: 20px;
-    margin: 20px 0;
-    display: flex;
-    flex-direction: column;
+    color: #0c0c0c;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    margin: -40px 20px 20px;
+    text-align: left;
+    max-width: 800px;
+    width: 100%;
 }
 
-#stats {
-    display: flex;
-    flex-direction: column;
-}
-
-footer {
+.statistics h1 {
     text-align: center;
-    margin-top: 20px;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.stat-item i {
+    margin-right: 10px;
+    color: #f39c12;
+}
+
+/* Footer */
+footer {
+    background: #222;
+    color: #aaa;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto;
+}
+
+footer a {
+    color: #f39c12;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+footer a:hover {
+    text-decoration: underline;
 }
