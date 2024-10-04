@@ -39,7 +39,7 @@ async function fetchStats() {
 }
 
 // Fetch stats every 5 seconds
-setInterval(fetchStats, 5000);
+setInterval(fetchStats, 60000);
 
 // Fetch stats on page load
 fetchStats();
