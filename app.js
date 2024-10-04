@@ -97,7 +97,7 @@ redisService.subscribe('botStatsChannel', (stats) => {
 
 redisService.subscribe('botCommandsChannel', (stats) => {
     // Assuming you have a function to update the page with new stats
-    Logger.info('Received bot stats via pub/sub');
+    Logger.info('Received bot commands via pub/sub');
     // Send the stats via WebSocket to the client, or directly update in-memory data
 });
 
