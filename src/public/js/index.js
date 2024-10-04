@@ -76,6 +76,7 @@ async function fetchCommandLog() {
 
 // Fetch stats every 60 seconds
 setInterval(fetchStats, 60000);
+setInterval(fetchCommandLog, 60000);
 
 // Fetch stats on page load
 fetchStats();
