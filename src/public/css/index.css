@@ -123,6 +123,42 @@ header nav ol li a:hover {
     color: #f39c12;
 }
 
+.command-section {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+}
+
+.commands {
+    background: #fff;
+    color: #0c0c0c;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    margin: -40px 20px 20px;
+    text-align: left;
+    max-width: 800px;
+    width: 100%;
+}
+
+.commands h1 {
+    font-size: 2rem;
+    text-align: center;
+
+}
+
+.commandLogList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #0c0c0c;
+}
+
+
 /* Footer */
 footer {
     background: #222;
