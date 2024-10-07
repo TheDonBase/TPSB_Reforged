@@ -35,6 +35,27 @@ fs.readdir(publicPath, (err, files) => {
 
 let currentStats = {};
 
+async function initializeStats() {
+    const stats = await redisService.get('botStats');
+    if (stats) {
+        currentStats = stats; // Update currentStats with fetched data
+    } else {
+        Logger.warn('No botStats found in Redis. Using default values.');
+        currentStats = {
+            memberCount: 0,
+            commandsUsed: 0,
+            uptime: 0,
+            ping: 0,
+            lastCommands: []
+        };
+    }
+}
+
+// Call initializeStats on server start
+initializeStats().then(() => {
+    console.log('Initialized stats from Redis');
+});
+
 // Endpoint to get stats
 app.get('/api/stats', (req, res) => {
     res.json(currentStats);

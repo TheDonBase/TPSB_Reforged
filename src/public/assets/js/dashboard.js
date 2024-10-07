@@ -15,10 +15,11 @@ async function fetchStats() {
         // Display last commands
         const lastCommandsContainer = document.getElementById('lastCommands');
         lastCommandsContainer.innerHTML = ''; // Clear previous commands
-        stats.lastCommands.forEach(command => {
-            const commandElement = document.createElement('li');
-            commandElement.textContent = command;
-            lastCommandsContainer.appendChild(commandElement);
+        
+        lastCommands.forEach(command => {
+            const li = document.createElement('li');
+            li.innerText = `${command.timestamp}: ${command.commandName} by ${command.user}`;
+            lastCommandsList.appendChild(li);
         });
     } catch (error) {
         console.error('Failed to fetch stats:', error);
