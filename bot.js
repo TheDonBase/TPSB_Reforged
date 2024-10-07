@@ -102,16 +102,14 @@ async function updateBotStats() {
         serverStatus: client.ws.status === 0 ? 'Online' : 'Offline',
         uptime: process.uptime(),
         ping: client.ws.ping,
-        sent: new Date().toISOString()
+        sent: new Date().toISOString(),
+        lastCommands: lastCommands,
+        commandsUsed: client.usedCommands,
     };
 
     try {
         await client.redisService.set('botStats', stats);
         await client.redisService.publish('botStatsChannel', stats);
-        await client.redisService.set('lastCommands', lastCommands);
-        await client.redisService.publish('botCommandsChannel', lastCommands);
-        await client.redisService.set('commandsUsed', client.commandsUsed);
-        await client.redisService.publish('botCommandsUsed', client.commandsUsed);
     } catch (error) {
         Logger.error('Failed to update bot stats: ' + error);
     }
