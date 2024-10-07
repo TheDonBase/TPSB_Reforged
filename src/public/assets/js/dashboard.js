@@ -1,3 +1,26 @@
+function formatUptime(seconds) {
+    const days = Math.floor(seconds / (24 * 3600));
+    const hours = Math.floor((seconds % (24 * 3600)) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+
+    let formattedUptime = '';
+
+    if (days > 0) {
+        formattedUptime += `${days} day${days > 1 ? 's' : ''} `;
+    }
+    if (hours > 0) {
+        formattedUptime += `${hours} hour${hours > 1 ? 's' : ''} `;
+    }
+    if (minutes > 0) {
+        formattedUptime += `${minutes} minute${minutes > 1 ? 's' : ''} `;
+    }
+    formattedUptime += `${secs} second${secs !== 1 ? 's' : ''}`;
+
+    return formattedUptime.trim();
+}
+
+
 async function fetchStats() {
     try {
         const response = await fetch('/api/stats');
@@ -12,7 +35,7 @@ async function fetchStats() {
         document.getElementById('serverName').innerText = data.serverName || 'N/A';
         document.getElementById('memberCount').innerText = data.memberCount || 0;
         document.getElementById('serverStatus').innerText = data.serverStatus || 'Unknown';
-        document.getElementById('uptime').innerText = data.uptime ? `${data.uptime.toFixed(2)} seconds` : 'N/A';
+        document.getElementById('uptime').innerText = data.uptime ? formatUptime(data.uptime) : 'N/A';
         document.getElementById('ping').innerText = data.ping || 'N/A';
         document.getElementById('commandsUsed').innerText = data.commandsUsed || 0;
 
