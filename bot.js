@@ -103,8 +103,8 @@ async function updateBotStats() {
         uptime: process.uptime(),
         ping: client.ws.ping,
         sent: new Date().toISOString(),
-        lastCommands: lastCommands,
         commandsUsed: client.usedCommands,
+        lastCommands: lastCommands,
     };
 
     try {
