@@ -27,6 +27,7 @@ client.redisService = new RedisService();
 
 client.currency = new Collection();
 client.commands = new Collection();
+client.commandsUsed = 0;
 client.commandLog = [];
 
 const foldersPath = path.join(__dirname, 'src/commands');
@@ -94,6 +95,7 @@ Logger.info(`Added CurrencyHelper`);
 
 async function updateBotStats() {
     const guild = client.guilds.cache.get('731431228959490108');
+    const lastCommands = client.commandLog;
     const stats = {
         serverName: guild ? guild.name : null,
         memberCount: guild ? guild.memberCount : 0,
@@ -103,21 +105,28 @@ async function updateBotStats() {
         sent: new Date().toISOString()
     };
 
-    // Instead of just setting it in Redis, publish to a channel
-    await client.redisService.set('botStats', stats);
-    await client.redisService.publish('botStatsChannel', stats);
+    try {
+        await client.redisService.set('botStats', stats);
+        await client.redisService.publish('botStatsChannel', stats);
+        await client.redisService.set('lastCommands', lastCommands);
+        await client.redisService.publish('botCommandsChannel', lastCommands);
+        await client.redisService.set('commandsUsed', client.commandsUsed);
+        await client.redisService.publish('botCommandsUsed', client.commandsUsed);
+    } catch (error) {
+        Logger.error('Failed to update bot stats: ' + error);
+    }
 }
 // Update stats every 30 seconds
 setInterval(updateBotStats, 30000);
 
-async function updateBotCommands() {
-    const lastCommands = client.commandLog;
-
-    // Instead of just setting it in Redis, publish to a channel
-    await client.redisService.set('lastCommands', lastCommands);
-    await client.redisService.publish('botCommandsChannel', lastCommands);
-}
-// Update stats every 60 seconds
-setInterval(updateBotCommands, 60000);
-
 client.login(token);
+
+process.on('SIGINT', async () => {
+    await client.redisService.quit();
+    process.exit();
+});
+
+process.on('SIGTERM', async () => {
+    await client.redisService.quit();
+    process.exit();
+});

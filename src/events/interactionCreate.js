@@ -26,6 +26,8 @@ module.exports = {
             if (interaction.client.commandLog.length > 10) {
                 interaction.client.commandLog.shift(); // Remove the oldest command to keep the array at max 10
             }
+            
+            interaction.client.commands++;
 
             await client.redisService.set('lastCommands', JSON.stringify(interaction.client.commandLog));
 

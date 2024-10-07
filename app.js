@@ -1,107 +1,52 @@
-const express = require('express');
-const fs = require('node:fs');
-const path = require('node:path');
 const Logger = require('./src/utils/logger.js');
 const RedisService = require('./src/utils/RedisService.js');
-const app = express();
 const port = 8080;
+const express = require('express');
+const http = require('http');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
-// Initialize Redis Service
+const app = express();
+const server = http.createServer(app);
 const redisService = new RedisService();
 
-app.use(express.json());
-app.use(express.static("src/public"));
+app.use(cors());
+app.use(express.static('src/public')); // Serve static files from src/public
 
-// Function to set up routes for public directory
-function setupRoutesForPublicDir(directory, app) {
-    fs.readdirSync(directory).forEach((file) => {
-        const fullPath = path.join(directory, file);
-        const stat = fs.statSync(fullPath);
+// Dynamically create routes for each HTML file in src/public
+const publicPath = path.join(__dirname, 'src/public'); // Corrected path
+fs.readdir(publicPath, (err, files) => {
+    if (err) {
+        console.error('Failed to read public directory:', err);
+        return;
+    }
 
-        if (stat.isDirectory()) {
-            // If it's a directory, recursively process its contents
-            setupRoutesForPublicDir(fullPath, app);
-        } else if (path.extname(file) === '.html') {
-            // If it's an HTML file, create a route
-            const relativePath = fullPath.replace(path.join(__dirname, 'src/public'), '');
-            const routePath = relativePath.replace(/\\/g, '/').replace(/\.html$/, '');
-
-            // Serve the HTML file at the generated route
-            app.get(routePath, (req, res) => {
-                res.sendFile(fullPath);
+    files.forEach(file => {
+        if (file.endsWith('.html')) {
+            const route = `/${file.replace('.html', '')}`; // Remove .html for the route
+            app.get(route, (req, res) => {
+                res.sendFile(path.join(publicPath, file));
             });
-
-            Logger.info(`Route created: ${routePath} -> ${fullPath}`);
+            console.log(`Route created: ${route} -> ${file}`);
         }
     });
-}
-
-// Setup routes for all HTML files in the src/public directory
-setupRoutesForPublicDir(path.join(__dirname, 'src/public'), app);
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
 });
 
-// Endpoint to get bot stats
-app.get('/api/stats', async (req, res) => {
-    try {
-        Logger.info("Stats API Endpoint reached.");
-        const stats = await redisService.get('botStats');
+let currentStats = {};
 
-        if (!stats) {
-            Logger.warn('No stats found in Redis.');
-            return res.status(404).send({ error: 'No stats available' });
-        }
-        
-        const now = Date.now();
-        const sentTime = new Date(stats.sent).getTime(); // Convert sent to timestamp
-        const timeDifference = now - sentTime;
-
-        // Check if the 'sent' timestamp is more than 5 minutes old (300,000 milliseconds)
-        if (timeDifference > 300000) {
-            stats.serverStatus = 'Offline'; // Alter server status to 'Offline'
-        }
-
-        res.status(200).json(stats);
-    } catch (err) {
-        Logger.error('Error fetching stats from Redis: ' + err);
-        res.status(500).send({ error: 'Failed to fetch stats' });
-    }
+// Endpoint to get stats
+app.get('/api/stats', (req, res) => {
+    res.json(currentStats);
 });
 
-app.get('/api/commands', async (req, res) => {
-    try {
-        Logger.info("Commands API Endpoint reached.");
-        const stats = await redisService.get('lastCommands');
-
-        if (!stats) {
-            Logger.warn('No stats found in Redis.');
-            return res.status(404).send({ error: 'No stats available' });
-        }
-       
-
-        res.status(200).json(stats);
-    } catch (err) {
-        Logger.error('Error fetching stats from Redis: ' + err);
-        res.status(500).send({ error: 'Failed to fetch stats' });
-    }
-});
-
-
-redisService.subscribe('botStatsChannel', (stats) => {
-    // Assuming you have a function to update the page with new stats
-    Logger.info('Received bot stats via pub/sub');
-    // Send the stats via WebSocket to the client, or directly update in-memory data
-});
-
-redisService.subscribe('botCommandsChannel', (stats) => {
-    // Assuming you have a function to update the page with new stats
-    Logger.info('Received bot commands via pub/sub');
-    // Send the stats via WebSocket to the client, or directly update in-memory data
+// Redis Pub/Sub
+redisService.subscribe('botStatsChannel', (message) => {
+    currentStats = message; // Update currentStats when a new message is received
+    console.log('Updated stats from Redis:', currentStats);
 });
 
 // Start the server
-app.listen(port, () => {
-    Logger.info(`Web interface running at http://localhost:${port}`);
+server.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });

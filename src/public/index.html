@@ -3,63 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Bot Stats</title>
-    <link rel="stylesheet" href="css/index.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <title>TPSB Project Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="assets/js/dashboard.js" defer></script>
 </head>
 <body>
     <header>
-        <nav>
-            <h1><span class="white">TPSB</span> <span class="black">Reforged</span> Bot</h1>
-            <ol>
-                <li><a href="">Home</a></li>
-                <li><a href="">Settings</a></li>
-                <li><a href="">Status</a></li>
-            </ol>
+        <nav class="navbar">
+            <div class="navbar-header">
+                <h1>TPSB Project</h1>
+            </div>
+            <ul class="navbar-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
         </nav>
     </header>
-    <main>
-        <section class="hero">
-            <h1>Welcome to TPSB Reforged Bot</h1>
-            <p>Your ultimate bot for server management and community fun!</p>
-            <a href="#stats" class="cta-button">View Stats</a>
-        </section>
-        <section class="stats">
-            <div class="statistics" id="stats">
-                <h1>Discord Bot Statistics</h1>
-                <div class="stat-item">
-                    <i class="fas fa-server"></i> <strong>Server Name:</strong> <span id="server-name">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-users"></i> <strong>Member Count: </strong> <span id="member-count">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-signal"></i> <strong>Bot Status: </strong> <span id="server-status">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-clock"></i> <strong>Bot Uptime: </strong> <span id="uptime">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-wifi"></i> <strong>Ping: </strong> <span id="ping">Loading...</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-clock"></i> <strong>Sent: </strong> <span id="sent">Loading...</span>
-                </div>
+    
+    <main class="container">
+        <h2>Bot Statistics</h2>
+        <div class="stats">
+            <div class="stat">
+                <span class="material-icons">people</span>
+                <h3>Members</h3>
+                <p id="memberCount">0</p>
             </div>
-        </section>
+            <div class="stat">
+                <span class="material-icons">command</span>
+                <h3>Commands Used</h3>
+                <p id="commandsUsed">0</p>
+            </div>
+            <div class="stat">
+                <span class="material-icons">timer</span>
+                <h3>Uptime (seconds)</h3>
+                <p id="uptime">0</p>
+            </div>
+            <div class="stat">
+                <span class="material-icons">speed</span>
+                <h3>Ping (ms)</h3>
+                <p id="ping">0</p>
+            </div>
+        </div>
 
-        <section class="command-section">
-            <div class="commands" id="cmds">
-                <h1>Discord Bot Command Log</h1>
-                <ul id="commandLogList"></ul> <!-- Add an unordered list to hold the command logs -->
-            </div>
+        <section class="last-commands">
+            <h2>Last Commands</h2>
+            <ul id="lastCommands"></ul>
         </section>
     </main>
-    <footer>
-        <p>&copy; 2024 TPSB Reforged | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-    </footer>
 
-    <script src="js/index.js"></script>
+    <footer>
+        <p>&copy; 2024 TPSB Project. All rights reserved.</p>
+    </footer>
 </body>
 </html>
