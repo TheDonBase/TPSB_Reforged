@@ -96,6 +96,7 @@ Logger.info(`Added CurrencyHelper`);
 async function updateBotStats() {
     const guild = client.guilds.cache.get('731431228959490108');
     const lastCommands = client.commandLog;
+    const commandsUsed = client.commandsUsed;
     const stats = {
         serverName: guild ? guild.name : null,
         memberCount: guild ? guild.memberCount : 0,
@@ -103,7 +104,7 @@ async function updateBotStats() {
         uptime: process.uptime(),
         ping: client.ws.ping,
         sent: new Date().toISOString(),
-        commandsUsed: client.usedCommands,
+        commandsUsed: commandsUsed,
         lastCommands: lastCommands,
     };
 
