@@ -13,7 +13,7 @@ async function fetchStats() {
 
         // Ensure lastCommands is an array
         if (Array.isArray(lastCommands)) {
-            const lastCommandsList = document.getElementById('commands-list');
+            const lastCommandsList = document.getElementById('lastCommands');
             lastCommandsList.innerHTML = ''; // Clear existing commands
 
             lastCommands.forEach(command => {
