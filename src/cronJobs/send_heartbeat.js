@@ -46,7 +46,7 @@ module.exports = client => {
     };
 
     // Schemalägg heartbeat var 10:e sekund
-    cron.schedule('*/10 * * * * *', sendHeartbeat, {
+    cron.schedule('* */10 * * * *', sendHeartbeat, {
         scheduled: true,
         timezone: 'Europe/Stockholm'
     });
