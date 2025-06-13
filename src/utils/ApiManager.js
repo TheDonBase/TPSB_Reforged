@@ -2,16 +2,31 @@ const Logger = require('./logger');
 
 // Config-objekt för API-anrop
 const API_CONFIG = {
-    baseUrl: process.env.API_BASE_URL || 'https://tpsb.croaztek.com/api',
+    baseUrl: `http://${process.env.DB_HOST}/api`, // Använder DB_HOST från .env
     apiKey: process.env.BOT_API_KEY
 };
 
+function validateApiConfig() {
+    if (!API_CONFIG.apiKey) {
+        throw new Error('BOT_API_KEY saknas i miljövariabler');
+    }
+
+    if (!process.env.DB_HOST) {
+        throw new Error('DB_HOST saknas i miljövariabler');
+    }
+}
+
+
+
 // Hjälpfunktion för API-anrop
-async function sendApiRequest(endpoint, data) {
+async function sendApiRequest(endpoint, data, retries = 3) {
     try {
+        validateApiConfig();
+
         Logger.debug(`Skickar förfrågan till ${endpoint}`, {
+            host: process.env.DB_HOST,
             endpoint,
-            data: JSON.stringify(data)
+            environment: process.env.NODE_ENV
         });
 
         const response = await fetch(`${API_CONFIG.baseUrl}${endpoint}`, {
@@ -34,8 +49,17 @@ async function sendApiRequest(endpoint, data) {
     } catch (error) {
         Logger.error(`API-anropsfel till ${endpoint}:`, {
             error: error.message,
-            stack: error.stack
+            host: process.env.DB_HOST,
+            environment: process.env.NODE_ENV
         });
+
+        if (retries > 0) {
+            const delay = (4 - retries) * 1000; // Ökar väntetiden för varje försök
+            Logger.info(`Försöker igen om ${delay/1000} sekunder... (${retries} försök kvar)`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return sendApiRequest(endpoint, data, retries - 1);
+        }
+
         throw error;
     }
 }
@@ -46,17 +70,19 @@ async function updateServerStatus(botInfo) {
         const data = {
             ping: botInfo.ping,
             version: botInfo.version,
-            memoryUsage: botInfo.memoryUsage, // Använd värdet som skickas in
-            currentActivity: botInfo.currentActivity // Ändrat från activity till currentActivity
+            memoryUsage: botInfo.memoryUsage,
+            currentActivity: botInfo.currentActivity
         };
 
         return await sendApiRequest('/bot/heartbeat', data);
     } catch (error) {
-        Logger.error('Kunde inte skicka heartbeat:', {
-            error: error.message,
-            botInfo: JSON.stringify(botInfo)
-        });
-        throw error; // Kasta om felet för att låta anroparen hantera det
+        if (process.env.NODE_ENV === 'production') {
+            Logger.error('Produktionsfel - Kunde inte skicka heartbeat:', {
+                error: error.message,
+                host: process.env.DB_HOST
+            });
+        }
+        throw error;
     }
 }
 
@@ -67,16 +93,17 @@ async function logError(error, level = 'error') {
             message: error.message,
             level: level,
             stackTrace: error.stack,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV
         };
 
         return await sendApiRequest('/error-log', data);
     } catch (err) {
         Logger.error('Kunde inte logga fel:', {
             originalError: error.message,
-            loggingError: err.message
+            loggingError: err.message,
+            host: process.env.DB_HOST
         });
-        // Här kastar vi inte om felet eftersom detta är en loggningsfunktion
     }
 }
 
@@ -88,19 +115,18 @@ async function logCommand(commandInfo) {
             username: commandInfo.username,
             commandName: commandInfo.commandName,
             arguments: commandInfo.arguments,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV
         };
 
         return await sendApiRequest('/command-log', data);
     } catch (error) {
         Logger.error('Kunde inte logga kommando:', {
             error: error.message,
-            commandInfo: JSON.stringify(commandInfo)
+            commandInfo: JSON.stringify(commandInfo),
+            host: process.env.DB_HOST
         });
-        // Logga som varning
-        await logError(error, 'warning').catch(err => {
-            Logger.error('Kunde inte logga kommandofel:', err.message);
-        });
+        await logError(error, 'warning').catch(() => {});
     }
 }
 
@@ -124,23 +150,16 @@ function formatCommandArguments(options) {
     }
 }
 
-// Hjälpfunktion för att validera API-konfiguration
-function validateApiConfig() {
-    if (!API_CONFIG.apiKey) {
-        throw new Error('BOT_API_KEY saknas i miljövariabler');
-    }
-
-    if (!API_CONFIG.baseUrl) {
-        throw new Error('API_BASE_URL saknas i miljövariabler');
-    }
-}
-
 // Validera konfigurationen vid start
 try {
     validateApiConfig();
+    Logger.info('API-konfiguration validerad:', {
+        host: process.env.DB_HOST,
+        environment: process.env.NODE_ENV
+    });
 } catch (error) {
     Logger.error('API-konfigurationsfel:', error.message);
-    process.exit(1); // Avsluta processen om konfigurationen är ogiltig
+    process.exit(1);
 }
 
 module.exports = {
