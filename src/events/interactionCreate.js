@@ -14,24 +14,6 @@ module.exports = {
         }
         
         try {
-            // Log command execution
-            const commandInfo = {
-                commandName: interaction.commandName,
-                user: interaction.user.tag,
-                timestamp: new Date().toISOString(),
-            };
-
-
-            // Add the command info to the log (limit the array to the last 10 commands)
-            interaction.client.commandLog.push(commandInfo); // Assuming client.commandLog is initialized as an empty array
-            if (interaction.client.commandLog.length > 10) {
-                interaction.client.commandLog.shift(); // Remove the oldest command to keep the array at max 10
-            }
-            
-            interaction.client.commandsUsed += 1;
-
-            await client.redisService.set('lastCommands', JSON.stringify(interaction.client.commandLog));
-
             await fetch('https://tpsb.croaztek.com/api/command-log', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
