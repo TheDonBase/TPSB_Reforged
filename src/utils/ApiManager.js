@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // Config-objekt för API-anrop
 const API_CONFIG = {
-    baseUrl: `http://${process.env.DB_HOST}/api`, // Använder DB_HOST från .env
+    baseUrl: `https://tpsb.${process.env.DB_HOST}/api`, // Använder DB_HOST från .env
     apiKey: process.env.BOT_API_KEY
 };
 
@@ -24,7 +24,7 @@ async function sendApiRequest(endpoint, data, retries = 3) {
     try {
         validateApiConfig();
 
-        Logger.debug(`Skickar förfrågan till ${endpoint}`, {
+        Logger.debug(`Skickar förfrågan till ${API_CONFIG.baseUrl}${endpoint}`, {
             host: process.env.DB_HOST,
             endpoint,
             environment: process.env.NODE_ENV
@@ -45,14 +45,17 @@ async function sendApiRequest(endpoint, data, retries = 3) {
         }
 
         const result = await response.json();
-        Logger.debug(`Lyckad förfrågan till ${endpoint}`, { result });
+        Logger.debug(`Lyckad förfrågan till ${API_CONFIG.baseUrl}${endpoint}`, { result });
         return result;
     } catch (error) {
-        Logger.error(`API-anropsfel till ${endpoint}:`, {
-            error: error.message,
-            host: process.env.DB_HOST,
-            environment: process.env.NODE_ENV
+        Logger.error(`API-anropsfel till ${API_CONFIG.baseUrl}${endpoint} :`, {
+            errorType: typeof error,
+            errorIsInstanceOfError: error instanceof Error,
+            errorMessage: error?.message,
+            errorStack: error?.stack,
+            errorRaw: error // om du vill se hela objektet
         });
+        
 
         if (retries > 0) {
             const delay = (4 - retries) * 1000; // Ökar väntetiden för varje försök
@@ -75,7 +78,7 @@ async function updateServerStatus(botInfo) {
             currentActivity: botInfo.currentActivity
         };
 
-        return await sendApiRequest('/bot/heartbeat', data);
+        return await sendApiRequest('/heartbeat', data);
     } catch (error) {
         if (process.env.NODE_ENV === 'production') {
             Logger.error('Produktionsfel - Kunde inte skicka heartbeat:', {

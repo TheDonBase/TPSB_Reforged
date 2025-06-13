@@ -53,7 +53,7 @@ module.exports = client => {
     };
 
     // ✅ Spara referensen till cron-jobbet
-    const cronJob = cron.schedule('* */10 * * * *', sendHeartbeat, {
+    const cronJob = cron.schedule('*/10 * * * * *', sendHeartbeat, {
         scheduled: true,
         timezone: 'Europe/Stockholm'
     });
