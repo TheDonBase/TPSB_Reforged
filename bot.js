@@ -5,8 +5,6 @@ const { token } = require('./config.json');
 const Logger = require('./src/utils/logger.js');
 const ErrorHandler = require('./src/utils/ErrorHandler.js');
 const CurrencyHelper = require('./src/utils/CurrencyHelper.js');
-const redis = require('redis');
-const RedisService = require('./src/utils/RedisService.js');
 
 const client = new Client({
     intents: [
@@ -93,34 +91,11 @@ client.errorHandler = new ErrorHandler(client);
 
 Logger.info(`Added CurrencyHelper`);
 
-async function updateBotStats() {
-    const guild = client.guilds.cache.get('731431228959490108');
-    const lastCommands = client.commandLog;
-    const commandsUsed = client.commandsUsed;
-    const stats = {
-        serverName: guild ? guild.name : null,
-        memberCount: guild ? guild.memberCount : 0,
-        serverStatus: client.ws.status === 0 ? 'Online' : 'Offline',
-        uptime: process.uptime(),
-        ping: client.ws.ping,
-        sent: new Date().toISOString(),
-        commandsUsed: commandsUsed,
-        lastCommands: lastCommands,
-    };
-
-    try {
-        await client.redisService.set('botStats', stats);
-        await client.redisService.publish('botStatsChannel', stats);
-    } catch (error) {
-        Logger.error('Failed to update bot stats: ' + error);
-    }
-}
-// Update stats every 30 seconds
-setInterval(updateBotStats, 30000);
 
 client.login(token);
 
 process.on('unhandledRejection', (reason, promise) => {
+    Logger.error(reason.message ?? reason.toString())
     fetch('https://tpsb.croaztek.com/api/error-log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -131,13 +106,3 @@ process.on('unhandledRejection', (reason, promise) => {
       })
     });
   });
-
-process.on('SIGINT', async () => {
-    await client.redisService.quit();
-    process.exit();
-});
-
-process.on('SIGTERM', async () => {
-    await client.redisService.quit();
-    process.exit();
-});
