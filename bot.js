@@ -21,7 +21,6 @@ const client = new Client({
     ]
 });
 
-client.redisService = new RedisService();
 
 client.currency = new Collection();
 client.commands = new Collection();
