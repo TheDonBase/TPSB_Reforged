@@ -5,6 +5,7 @@ const { token } = require('./config.json');
 const Logger = require('./src/utils/logger.js');
 const ErrorHandler = require('./src/utils/ErrorHandler.js');
 const CurrencyHelper = require('./src/utils/CurrencyHelper.js');
+const { logError } = require('./src/utils/ApiManager.js');
 
 const client = new Client({
     intents: [

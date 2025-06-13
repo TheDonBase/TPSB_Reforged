@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const Logger = require('../utils/logger');
+const { logError, logCommand, formatCommandArguments } = require('../utils/ApiManager.js');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -15,19 +16,16 @@ module.exports = {
         
         try {
             Logger.info('Sending Command Log')
-            await fetch('https://tpsb.croaztek.com/api/command-log', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  discordUserId: interaction.user.id,
-                  username: interaction.user.username,
-                  commandName: interaction.commandName,
-                  arguments: interaction.options?.data ?? []
-                })
-              });
+            await logCommand({
+                userId: interaction.user.id,
+                username: interaction.user.username,
+                commandName: interaction.commandName,
+                arguments: formatCommandArguments(interaction.options)
+            });
             Logger.info('Command Log Sent Successfully.')
             await command.execute(interaction, client);
         } catch (error) {
+            await logError(error);
             Logger.error(`Error executing ${interaction.commandName}`);
             Logger.error(error);
             if (interaction.replied || interaction.deferred) {
