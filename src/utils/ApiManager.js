@@ -1,4 +1,5 @@
 const Logger = require('./logger');
+require('dotenv').config();
 
 // Config-objekt för API-anrop
 const API_CONFIG = {
