@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 // Config-objekt för API-anrop
 const API_CONFIG = {
     baseUrl: 'https://tpsb.croaztek.com/api',
