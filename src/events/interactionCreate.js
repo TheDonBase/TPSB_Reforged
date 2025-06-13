@@ -14,6 +14,7 @@ module.exports = {
         }
         
         try {
+            Logger.info('Sending Command Log')
             await fetch('https://tpsb.croaztek.com/api/command-log', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -24,7 +25,7 @@ module.exports = {
                   arguments: interaction.options?.data ?? []
                 })
               });
-
+            Logger.info('Command Log Sent Successfully.')
             await command.execute(interaction, client);
         } catch (error) {
             Logger.error(`Error executing ${interaction.commandName}`);
