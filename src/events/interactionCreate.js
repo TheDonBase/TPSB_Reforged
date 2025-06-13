@@ -21,6 +21,7 @@ module.exports = {
                 timestamp: new Date().toISOString(),
             };
 
+
             // Add the command info to the log (limit the array to the last 10 commands)
             interaction.client.commandLog.push(commandInfo); // Assuming client.commandLog is initialized as an empty array
             if (interaction.client.commandLog.length > 10) {
@@ -30,6 +31,17 @@ module.exports = {
             interaction.client.commandsUsed += 1;
 
             await client.redisService.set('lastCommands', JSON.stringify(interaction.client.commandLog));
+
+            await fetch('https://tpsb.croaztek.com/api/command-log', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  discordUserId: interaction.user.id,
+                  username: interaction.user.username,
+                  commandName: interaction.commandName,
+                  arguments: interaction.options?.data ?? []
+                })
+              });
 
             await command.execute(interaction, client);
         } catch (error) {

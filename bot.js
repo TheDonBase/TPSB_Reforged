@@ -120,6 +120,18 @@ setInterval(updateBotStats, 30000);
 
 client.login(token);
 
+process.on('unhandledRejection', (reason, promise) => {
+    fetch('https://tpsb.croaztek.com/api/error-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        level: 'unhandledRejection',
+        message: reason.message ?? reason.toString(),
+        stackTrace: reason.stack ?? null
+      })
+    });
+  });
+
 process.on('SIGINT', async () => {
     await client.redisService.quit();
     process.exit();
