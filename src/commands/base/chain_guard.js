@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('discord.js');
-const Logger = require('../../utils/logger');
 const Database = require("../../utils/DatabaseHandler");
 
 let chainGuard = {
@@ -9,7 +8,7 @@ let chainGuard = {
 };
 
 const db = new Database();
-const chainerRoleId = '1117518078616539197'; // your @chainers role ID
+const chainerRoleId = '1117518078616539197'; // byt till din roll-ID
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -52,15 +51,23 @@ async function startChainGuard(interaction, factionUrl) {
       if (!chainGuard.isActive) return;
 
       const res = await fetch(factionUrl);
-      const data = await res.json();
-      const chain = data?.chain;
+      if (!res.ok) {
+        console.error(`Fetch failed: ${res.status} ${res.statusText}`);
+        return interaction.channel.send('❌ Failed to fetch chain data.');
+      }
 
-      if (!chain || chain.current === 0) {
+      const data = await res.json();
+      console.debug("DEBUG - API response:", JSON.stringify(data, null, 2));
+
+      const chain = data?.chain;
+      console.debug("DEBUG - Parsed chain object:", chain);
+
+      if (!chain || chain.current <= 0) {
         chainGuard.remaining = null;
         return interaction.channel.send('⚠️ No active chain detected.');
       }
 
-      const remaining = chain.timeout; // in seconds
+      const remaining = chain.timeout; // seconds left before chain ends
       if (!chainGuard.remaining) {
         chainGuard.remaining = remaining;
       }
@@ -77,8 +84,7 @@ async function startChainGuard(interaction, factionUrl) {
           chainGuard.remaining = newRemaining;
           chainGuard.timeout = setTimeout(checkChain, 30000);
         } else {
-          const endTime = `<t:${updatedChain.end}:R>`; // Relative Discord time format
-
+          const endTime = `<t:${updatedChain.end}:R>`; // Discord relative time
           interaction.channel.send({
             content: `<@&${chainerRoleId}> ⚠️ **Chain is about to drop!**`,
             embeds: [
@@ -104,7 +110,7 @@ async function startChainGuard(interaction, factionUrl) {
     await checkChain();
   } catch (err) {
     console.error('Chain guard error:', err);
-    interaction.channel.send('❌ Failed to fetch chain data.');
+    interaction.channel.send('❌ An error occurred while checking chain status.');
     chainGuard.isActive = false;
   }
 }
