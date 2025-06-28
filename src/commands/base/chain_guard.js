@@ -70,17 +70,20 @@ async function startChainGuard(interaction, factionUrl) {
       const res = await fetch(factionUrl);
       if (!res.ok) {
         console.error(`Fetch failed: ${res.status} ${res.statusText}`);
+        chainGuard.isActive = false;
+        if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
         return interaction.channel.send('❌ Failed to fetch chain data.');
       }
 
       const data = await res.json();
-      console.debug("DEBUG - API response:", JSON.stringify(data, null, 2));
 
       const chain = data?.chain;
       console.debug("DEBUG - Parsed chain object:", chain);
 
       if (!chain || chain.current <= 0) {
         chainGuard.remaining = null;
+        if(chainGuard.isActive) chainGuard.isActive = false;
+        if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
         return interaction.channel.send('⚠️ No active chain detected.');
       }
 
