@@ -26,8 +26,8 @@ module.exports = {
 
   async execute(interaction) {
     const action = interaction.options.getString('action');
-    const tornApiKey = await db.getApiKey('war');
-    logger.debug(tornApiKey)
+    const keyResult = await db.getApiKey('peace');
+    const tornApiKey = Array.isArray(keyResult) ? keyResult[0]?.api_key : keyResult?.api_key;
     const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
 
     if (action === 'start') {
