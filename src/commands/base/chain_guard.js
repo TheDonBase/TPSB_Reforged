@@ -34,13 +34,13 @@ module.exports = {
       const api_key_array = JSON.parse(keyResult);
       if (Array.isArray(api_key_array) && api_key_array.length > 0) {
         api_key = api_key_array[0].api_key;
-        Logger.debug(`API Key: ${api_key}`);
+        Logger.chain(`API Key: ${api_key}`);
       } else {
-        Logger.error("Invalid JSON format or empty array.");
+        Logger.chain("Invalid JSON format or empty array.");
         return interaction.reply("Error: Unable to retrieve API key.");
       }
     } catch (error) {
-      Logger.error(`Error parsing JSON: ${error.message}`);
+      Logger.chain(`Error parsing JSON: ${error.message}`);
       return interaction.reply("Error: Unable to parse API key.");
     }
     const tornApiKey = api_key;
@@ -69,7 +69,7 @@ async function startChainGuard(interaction, factionUrl) {
 
       const res = await fetch(factionUrl);
       if (!res.ok) {
-        Logger.error(`Fetch failed: ${res.status} ${res.statusText}`);
+        Logger.chain(`Fetch failed: ${res.status} ${res.statusText}`);
         chainGuard.isActive = false;
         if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
         return interaction.channel.send('❌ Failed to fetch chain data.');
@@ -78,7 +78,7 @@ async function startChainGuard(interaction, factionUrl) {
       const data = await res.json();
 
       const chain = data?.chain;
-      Logger.debug("DEBUG - Parsed chain object:", chain);
+      Logger.chain("DEBUG - Parsed chain object:", chain);
 
       if (!chain || chain.current <= 0) {
         chainGuard.remaining = null;
@@ -129,7 +129,7 @@ async function startChainGuard(interaction, factionUrl) {
 
     await checkChain();
   } catch (err) {
-    Logger.error('Chain guard error:', err);
+    Logger.chain('Chain guard error:', err);
     interaction.channel.send('❌ An error occurred while checking chain status.');
     chainGuard.isActive = false;
   }

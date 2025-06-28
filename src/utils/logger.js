@@ -3,7 +3,7 @@ const path = require('path');
 
 class Logger {
     constructor() {
-        this.logLevels = ['error', 'debug', 'warning', 'info'];
+        this.logLevels = ['error', 'debug', 'warning', 'info', 'chain'];
         this.logFiles = {};
 
         const logFolder = path.join(__dirname, 'logs');
@@ -67,6 +67,10 @@ class Logger {
 
     info(message, data = null) {
         this.log('info', message, data);
+    }
+
+    chain(message, data = null) {
+        this.log('chain', message, data);
     }
 }
 
