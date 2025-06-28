@@ -27,7 +27,7 @@ module.exports = {
 
   async execute(interaction) {
     const action = interaction.options.getString('action');
-    const keyResult = await db.getApiKey('peace');
+    const keyResult = await db.getApiKey('war');
     let api_key;
 
     try {
