@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const Database = require("../../utils/DatabaseHandler");
+const Logger = require('../../utils/logger');
 
 let chainGuard = {
   isActive: false,
