@@ -49,8 +49,13 @@ class Logger {
         this.logFiles[level].write(logMessage + '\n');
 
         // Skriv till konsol
-        const consoleMethod = level === 'warning' ? 'warn' : level;
+        // Skriv till konsol
+        let consoleMethod = level === 'warning' ? 'warn' : level;
+        if (typeof console[consoleMethod] !== 'function') {
+            consoleMethod = 'log'; // fallback
+        }
         console[consoleMethod](logMessage);
+
     }
 
     error(message, data = null) {
