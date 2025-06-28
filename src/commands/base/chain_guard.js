@@ -27,6 +27,21 @@ module.exports = {
   async execute(interaction) {
     const action = interaction.options.getString('action');
     const keyResult = await db.getApiKey('peace');
+    let api_key;
+
+    try {
+        const api_key_array = JSON.parse(keyResult);
+        if (Array.isArray(api_key_array) && api_key_array.length > 0) {
+            api_key = api_key_array[0].api_key;
+            Logger.debug(`API Key: ${api_key}`);
+        } else {
+            Logger.error("Invalid JSON format or empty array.");
+            return interaction.reply("Error: Unable to retrieve API key.");
+        }
+    } catch (error) {
+        Logger.error(`Error parsing JSON: ${error.message}`);
+        return interaction.reply("Error: Unable to parse API key.");
+    }
     const tornApiKey = Array.isArray(keyResult) ? keyResult[0]?.api_key : keyResult?.api_key;
     const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
 
