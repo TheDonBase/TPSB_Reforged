@@ -28,7 +28,7 @@ module.exports = {
   async execute(interaction) {
     const action = interaction.options.getString('action');
     const tornApiKey = await db.getApiKey('peace');
-    const factionUrl = `https://api.torn.com/faction/?selections=chains&key=${tornApiKey}`;
+    const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
 
     if (action === 'start') {
       if (chainGuard.isActive) return interaction.reply({ content: 'Chain guard is already running!', ephemeral: true });
@@ -53,33 +53,49 @@ async function startChainGuard(interaction, factionUrl) {
 
       const res = await fetch(factionUrl);
       const data = await res.json();
-      const chains = data?.chains;
-      const chain = chains?.[Object.keys(chains)[0]];
+      const chain = data?.chain;
 
-      if (!chain || chain.chain === 0) {
+      if (!chain || chain.current === 0) {
         chainGuard.remaining = null;
         return interaction.channel.send('⚠️ No active chain detected.');
       }
 
-      const remaining = chain.timeout;
+      const remaining = chain.timeout; // in seconds
       if (!chainGuard.remaining) {
         chainGuard.remaining = remaining;
       }
 
       if (remaining > 60) {
-        // More than 1 min left, wait and check again
         chainGuard.timeout = setTimeout(checkChain, 30000);
       } else {
-        // 1 min or less, double check
         const updatedRes = await fetch(factionUrl);
         const updatedData = await updatedRes.json();
-        const newRemaining = updatedData?.chains?.[Object.keys(updatedData.chains)[0]]?.timeout || 0;
+        const updatedChain = updatedData?.chain;
+        const newRemaining = updatedChain?.timeout || 0;
 
         if (newRemaining > remaining) {
           chainGuard.remaining = newRemaining;
           chainGuard.timeout = setTimeout(checkChain, 30000);
         } else {
-          interaction.channel.send(`<@&${chainerRoleId}> ⚠️ Chain is about to drop! Only **${remaining} seconds** left!`);
+          const endTime = `<t:${updatedChain.end}:R>`; // Relative Discord time format
+
+          interaction.channel.send({
+            content: `<@&${chainerRoleId}> ⚠️ **Chain is about to drop!**`,
+            embeds: [
+              {
+                title: `Chain Warning ⚠️`,
+                color: 0xffaa00,
+                fields: [
+                  { name: "Current Chain", value: `${updatedChain.current}/${updatedChain.max}`, inline: true },
+                  { name: "Time Remaining", value: `${newRemaining} seconds`, inline: true },
+                  { name: "Modifier", value: `${updatedChain.modifier}x`, inline: true },
+                  { name: "Ends", value: endTime, inline: false },
+                ],
+                footer: { text: 'Stay sharp!' }
+              }
+            ]
+          });
+
           chainGuard.timeout = setTimeout(checkChain, 15000);
         }
       }
