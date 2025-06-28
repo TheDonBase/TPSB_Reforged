@@ -1,5 +1,4 @@
 const { Client, ChannelType } = require('discord.js'); // säkerställ att Client används
-const client = require('../../bot'); // se till att client exporteras från din botfil
 
 async function startChainGuard(interaction, factionUrl) {
   let hasRetried = false;
@@ -20,7 +19,7 @@ async function startChainGuard(interaction, factionUrl) {
       }
 
       // Skicka till loggkanalen
-      const logChannel = await client.channels.fetch('731989414531563603').catch(() => null);
+      const logChannel = await interaction.guild.channels.cache.get('731989414531563603').catch(() => null);
       if (logChannel && logChannel.type === ChannelType.GuildText) {
         logChannel.send(`❌ Chain guard fetch failed twice. Status: ${res.status} ${res.statusText}`);
       }
