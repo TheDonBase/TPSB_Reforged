@@ -42,7 +42,7 @@ module.exports = {
         Logger.error(`Error parsing JSON: ${error.message}`);
         return interaction.reply("Error: Unable to parse API key.");
     }
-    const tornApiKey = Array.isArray(keyResult) ? keyResult[0]?.api_key : keyResult?.api_key;
+    const tornApiKey = api_key;
     const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
 
     if (action === 'start') {
