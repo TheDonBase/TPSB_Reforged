@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ChannelType } = require('discord.js');
+const {SlashCommandBuilder, ChannelType} = require('discord.js');
 const Database = require("../../utils/DatabaseHandler");
 const Logger = require('../../utils/logger');
 
@@ -20,8 +20,8 @@ module.exports = {
         .setDescription('start or stop')
         .setRequired(true)
         .addChoices(
-          { name: 'start', value: 'start' },
-          { name: 'stop', value: 'stop' },
+          {name: 'start', value: 'start'},
+          {name: 'stop', value: 'stop'},
         )
     ),
 
@@ -48,7 +48,7 @@ module.exports = {
     const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
 
     if (action === 'start') {
-      if (chainGuard.isActive) return interaction.reply({ content: 'Chain guard is already running!', ephemeral: true });
+      if (chainGuard.isActive) return interaction.reply({content: 'Chain guard is already running!', ephemeral: true});
 
       chainGuard.isActive = true;
       await interaction.reply('🔒 Chain guard started!');
@@ -98,61 +98,64 @@ async function startChainGuard(interaction, factionUrl, tornApiKey) {
     const chain = data?.chain;
     Logger.chain("DEBUG - Parsed chain object:", chain);
 
-    if (!chain || chain.current <= 0) {
-      // Om cooldown finns, visa rapport
-      if (chain.cooldown && chain.cooldown > 0) {
-        const reportRes = await fetch(`https://api.torn.com/faction/?selections=chainreport&key=${tornApiKey}`);
-        if (reportRes.ok) {
-          const reportData = await reportRes.json();
-          const report = reportData?.chainreport;
+    // Om cooldown finns, visa rapport
+    if (chain.cooldown && chain.cooldown > 0) {
+      const reportRes = await fetch(`https://api.torn.com/faction/?selections=chainreport&key=${tornApiKey}`);
+      if (reportRes.ok) {
+        const reportData = await reportRes.json();
+        const report = reportData?.chainreport;
 
-          if (report) {
-            const topMembers = Object.values(report.members)
-              .sort((a, b) => b.respect - a.respect)
-              .slice(0, 3);
+        if (report) {
+          const topMembers = Object.values(report.members)
+            .sort((a, b) => b.respect - a.respect)
+            .slice(0, 3);
 
-            const topUsers = await Promise.all(topMembers.map(async (member) => {
-              const userRes = await fetch(`https://api.torn.com/user/${member.userID}?selections=basic&key=${tornApiKey}`);
-              if (!userRes.ok) return { name: `ID: ${member.userID}`, respect: member.respect.toFixed(2), attacks: member.attacks };
-              const userData = await userRes.json();
-              return {
-                name: userData.name || `ID: ${member.userID}`,
-                respect: member.respect.toFixed(2),
-                attacks: member.attacks
-              };
-            }));
-
-            const embed = {
-              title: '📊 Chain Ended - Cooldown Active',
-              color: 0x00bfff,
-              fields: [
-                { name: 'Chain', value: `#${report.chain}`, inline: true },
-                { name: 'Respect Gained', value: `${report.respect.toFixed(2)}`, inline: true },
-                { name: 'Targets Hit', value: `${report.targets}`, inline: true },
-                { name: 'Leaves', value: `${report.leave}`, inline: true },
-                { name: 'Mugs', value: `${report.mug}`, inline: true },
-                { name: 'Hospitals', value: `${report.hospitalize}`, inline: true },
-                { name: 'Assists', value: `${report.assists}`, inline: true },
-                { name: 'Best Hit', value: `${report.besthit}`, inline: true },
-                {
-                  name: '🥇 Top 3 Members',
-                  value: topUsers.map((u, i) => `**${i + 1}.** ${u.name} — ${u.respect} respect (${u.attacks} atk)`).join('\n'),
-                  inline: false
-                }
-              ],
-              footer: { text: 'Chain Cooldown Active' }
+          const topUsers = await Promise.all(topMembers.map(async (member) => {
+            const userRes = await fetch(`https://api.torn.com/user/${member.userID}?selections=basic&key=${tornApiKey}`);
+            if (!userRes.ok) return {
+              name: `ID: ${member.userID}`,
+              respect: member.respect.toFixed(2),
+              attacks: member.attacks
             };
+            const userData = await userRes.json();
+            return {
+              name: userData.name || `ID: ${member.userID}`,
+              respect: member.respect.toFixed(2),
+              attacks: member.attacks
+            };
+          }));
 
-            await interaction.channel.send({ embeds: [embed] });
-          }
+          const embed = {
+            title: '📊 Chain Ended - Cooldown Active',
+            color: 0x00bfff,
+            fields: [
+              {name: 'Chain', value: `#${report.chain}`, inline: true},
+              {name: 'Respect Gained', value: `${report.respect.toFixed(2)}`, inline: true},
+              {name: 'Targets Hit', value: `${report.targets}`, inline: true},
+              {name: 'Leaves', value: `${report.leave}`, inline: true},
+              {name: 'Mugs', value: `${report.mug}`, inline: true},
+              {name: 'Hospitals', value: `${report.hospitalize}`, inline: true},
+              {name: 'Assists', value: `${report.assists}`, inline: true},
+              {name: 'Best Hit', value: `${report.besthit}`, inline: true},
+              {
+                name: '🥇 Top 3 Members',
+                value: topUsers.map((u, i) => `**${i + 1}.** ${u.name} — ${u.respect} respect (${u.attacks} atk)`).join('\n'),
+                inline: false
+              }
+            ],
+            footer: {text: 'Chain Cooldown Active'}
+          };
+
+          await interaction.channel.send({embeds: [embed]});
+
+          chainGuard.remaining = null;
+          chainGuard.isActive = false;
+          if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
+          return;
         }
       }
-
-      chainGuard.remaining = null;
-      chainGuard.isActive = false;
-      if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
-      return;
     }
+
 
     const remaining = chain.timeout;
     if (!chainGuard.remaining) {
@@ -179,12 +182,12 @@ async function startChainGuard(interaction, factionUrl, tornApiKey) {
               title: `Chain Warning ⚠️`,
               color: 0xffaa00,
               fields: [
-                { name: "Current Chain", value: `${updatedChain.current}/${updatedChain.max}`, inline: true },
-                { name: "Time Remaining", value: `${newRemaining} seconds`, inline: true },
-                { name: "Modifier", value: `${updatedChain.modifier}x`, inline: true },
-                { name: "Ends", value: endTime, inline: false },
+                {name: "Current Chain", value: `${updatedChain.current}/${updatedChain.max}`, inline: true},
+                {name: "Time Remaining", value: `${newRemaining} seconds`, inline: true},
+                {name: "Modifier", value: `${updatedChain.modifier}x`, inline: true},
+                {name: "Ends", value: endTime, inline: false},
               ],
-              footer: { text: 'Stay sharp!' }
+              footer: {text: 'Stay sharp!'}
             }
           ]
         });
