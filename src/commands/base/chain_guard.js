@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const {SlashCommandBuilder} = require('discord.js');
 const Database = require("../../utils/DatabaseHandler");
 const Logger = require('../../utils/logger');
 
@@ -20,8 +20,8 @@ module.exports = {
         .setDescription('start or stop')
         .setRequired(true)
         .addChoices(
-          { name: 'start', value: 'start' },
-          { name: 'stop', value: 'stop' },
+          {name: 'start', value: 'start'},
+          {name: 'stop', value: 'stop'},
         )
     ),
 
@@ -31,23 +31,23 @@ module.exports = {
     let api_key;
 
     try {
-        const api_key_array = JSON.parse(keyResult);
-        if (Array.isArray(api_key_array) && api_key_array.length > 0) {
-            api_key = api_key_array[0].api_key;
-            Logger.debug(`API Key: ${api_key}`);
-        } else {
-            Logger.error("Invalid JSON format or empty array.");
-            return interaction.reply("Error: Unable to retrieve API key.");
-        }
+      const api_key_array = JSON.parse(keyResult);
+      if (Array.isArray(api_key_array) && api_key_array.length > 0) {
+        api_key = api_key_array[0].api_key;
+        Logger.debug(`API Key: ${api_key}`);
+      } else {
+        Logger.error("Invalid JSON format or empty array.");
+        return interaction.reply("Error: Unable to retrieve API key.");
+      }
     } catch (error) {
-        Logger.error(`Error parsing JSON: ${error.message}`);
-        return interaction.reply("Error: Unable to parse API key.");
+      Logger.error(`Error parsing JSON: ${error.message}`);
+      return interaction.reply("Error: Unable to parse API key.");
     }
     const tornApiKey = api_key;
     const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
 
     if (action === 'start') {
-      if (chainGuard.isActive) return interaction.reply({ content: 'Chain guard is already running!', ephemeral: true });
+      if (chainGuard.isActive) return interaction.reply({content: 'Chain guard is already running!', ephemeral: true});
 
       chainGuard.isActive = true;
       await interaction.reply('🔒 Chain guard started!');
@@ -69,7 +69,7 @@ async function startChainGuard(interaction, factionUrl) {
 
       const res = await fetch(factionUrl);
       if (!res.ok) {
-        console.error(`Fetch failed: ${res.status} ${res.statusText}`);
+        Logger.error(`Fetch failed: ${res.status} ${res.statusText}`);
         chainGuard.isActive = false;
         if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
         return interaction.channel.send('❌ Failed to fetch chain data.');
@@ -78,11 +78,11 @@ async function startChainGuard(interaction, factionUrl) {
       const data = await res.json();
 
       const chain = data?.chain;
-      console.debug("DEBUG - Parsed chain object:", chain);
+      Logger.debug("DEBUG - Parsed chain object:", chain);
 
       if (!chain || chain.current <= 0) {
         chainGuard.remaining = null;
-        if(chainGuard.isActive) chainGuard.isActive = false;
+        if (chainGuard.isActive) chainGuard.isActive = false;
         if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
         return interaction.channel.send('⚠️ No active chain detected.');
       }
@@ -112,12 +112,12 @@ async function startChainGuard(interaction, factionUrl) {
                 title: `Chain Warning ⚠️`,
                 color: 0xffaa00,
                 fields: [
-                  { name: "Current Chain", value: `${updatedChain.current}/${updatedChain.max}`, inline: true },
-                  { name: "Time Remaining", value: `${newRemaining} seconds`, inline: true },
-                  { name: "Modifier", value: `${updatedChain.modifier}x`, inline: true },
-                  { name: "Ends", value: endTime, inline: false },
+                  {name: "Current Chain", value: `${updatedChain.current}/${updatedChain.max}`, inline: true},
+                  {name: "Time Remaining", value: `${newRemaining} seconds`, inline: true},
+                  {name: "Modifier", value: `${updatedChain.modifier}x`, inline: true},
+                  {name: "Ends", value: endTime, inline: false},
                 ],
-                footer: { text: 'Stay sharp!' }
+                footer: {text: 'Stay sharp!'}
               }
             ]
           });
@@ -129,7 +129,7 @@ async function startChainGuard(interaction, factionUrl) {
 
     await checkChain();
   } catch (err) {
-    console.error('Chain guard error:', err);
+    Logger.error('Chain guard error:', err);
     interaction.channel.send('❌ An error occurred while checking chain status.');
     chainGuard.isActive = false;
   }
