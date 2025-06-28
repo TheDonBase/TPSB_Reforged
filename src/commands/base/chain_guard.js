@@ -1,4 +1,66 @@
-const { Client, ChannelType } = require('discord.js'); // säkerställ att Client används
+const {SlashCommandBuilder} = require('discord.js');
+const Database = require("../../utils/DatabaseHandler");
+const Logger = require('../../utils/logger');
+
+let chainGuard = {
+  isActive: false,
+  timeout: null,
+  remaining: null,
+};
+
+const db = new Database();
+const chainerRoleId = '1117518078616539197'; // byt till din roll-ID
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('chain-guard')
+    .setDescription('Start or stop chain guard')
+    .addStringOption(option =>
+      option.setName('action')
+        .setDescription('start or stop')
+        .setRequired(true)
+        .addChoices(
+          {name: 'start', value: 'start'},
+          {name: 'stop', value: 'stop'},
+        )
+    ),
+
+  async execute(interaction) {
+    const action = interaction.options.getString('action');
+    const keyResult = await db.getApiKey('war');
+    let api_key;
+
+    try {
+      const api_key_array = JSON.parse(keyResult);
+      if (Array.isArray(api_key_array) && api_key_array.length > 0) {
+        api_key = api_key_array[0].api_key;
+        Logger.chain(`API Key: ${api_key}`);
+      } else {
+        Logger.chain("Invalid JSON format or empty array.");
+        return interaction.reply("Error: Unable to retrieve API key.");
+      }
+    } catch (error) {
+      Logger.chain(`Error parsing JSON: ${error.message}`);
+      return interaction.reply("Error: Unable to parse API key.");
+    }
+    const tornApiKey = api_key;
+    const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
+
+    if (action === 'start') {
+      if (chainGuard.isActive) return interaction.reply({content: 'Chain guard is already running!', ephemeral: true});
+
+      chainGuard.isActive = true;
+      await interaction.reply('🔒 Chain guard started!');
+      startChainGuard(interaction, factionUrl);
+    }
+
+    if (action === 'stop') {
+      chainGuard.isActive = false;
+      if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
+      return interaction.reply('🛑 Chain guard stopped.');
+    }
+  },
+};
 
 async function startChainGuard(interaction, factionUrl) {
   let hasRetried = false;
