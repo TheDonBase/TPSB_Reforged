@@ -2,6 +2,7 @@ const {SlashCommandBuilder} = require('discord.js');
 const Database = require("../../utils/DatabaseHandler");
 const {MessageEmbed} = require('discord.js');
 const Logger = require('../../utils/logger');
+const { sendApiRequest } = require('../../utils/ApiManager');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -55,8 +56,32 @@ track-stats:<your-api-key>
             };
 
             // Update the database with new stats
-            const updateQuery = 'UPDATE stat_tracking SET strength = ?, speed = ?, dexterity = ?, defense = ? WHERE username = ?';
-            await db.query(updateQuery, [newData.strength, newData.speed, newData.dexterity, newData.defense, interaction.user.username]);
+
+            const statsPayload = {
+                username: interaction.user.username,
+                strength: newData.strength,
+                speed: newData.speed,
+                dexterity: newData.dexterity,
+                defense: newData.defense,
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                await sendApiRequest(`/stats/${interaction.user.username}`, statsPayload, 3, 'PATCH');
+                Logger.info(`PATCH skickad till /stats/${interaction.user.username}`);
+            } catch (patchError) {
+                Logger.warn(`PATCH misslyckades, försöker POST istället...`);
+                try {
+                    await sendApiRequest(`/stats`, statsPayload, 3, 'POST');
+                    Logger.info(`POST skickad till /stats`);
+                } catch (postError) {
+                    Logger.error(`Kunde inte skicka stats till API:`, {
+                        patchError: patchError.message,
+                        postError: postError.message
+                    });
+                }
+            }
+
             const oldStatsDate = new Date(oldData.updated_at).toLocaleDateString();
             // Create an embed with old stats, new stats, and gains
             const embed = {

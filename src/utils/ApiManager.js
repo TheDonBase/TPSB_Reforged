@@ -18,9 +18,8 @@ function validateApiConfig() {
 }
 
 
-
 // Hjälpfunktion för API-anrop
-async function sendApiRequest(endpoint, data, retries = 3) {
+async function sendApiRequest(endpoint, data, retries = 3, method = 'POST') {
     try {
         validateApiConfig();
 
@@ -31,7 +30,7 @@ async function sendApiRequest(endpoint, data, retries = 3) {
         });
 
         const response = await fetch(`${API_CONFIG.baseUrl}${endpoint}`, {
-            method: 'POST',
+            method,
             headers: {
                 'Content-Type': 'application/json',
                 'X-API-Key': API_CONFIG.apiKey
@@ -45,7 +44,7 @@ async function sendApiRequest(endpoint, data, retries = 3) {
         }
 
         const result = await response.json();
-        Logger.debug(`Lyckad förfrågan till ${API_CONFIG.baseUrl}${endpoint}`, { result });
+        Logger.debug(`Lyckad förfrågan till ${API_CONFIG.baseUrl}${endpoint}`, {result});
         return result;
     } catch (error) {
         Logger.error(`API-anropsfel till ${API_CONFIG.baseUrl}${endpoint} :`, {
@@ -55,11 +54,11 @@ async function sendApiRequest(endpoint, data, retries = 3) {
             errorStack: error?.stack,
             errorRaw: error // om du vill se hela objektet
         });
-        
+
 
         if (retries > 0) {
             const delay = (4 - retries) * 1000; // Ökar väntetiden för varje försök
-            Logger.info(`Försöker igen om ${delay/1000} sekunder... (${retries} försök kvar)`);
+            Logger.info(`Försöker igen om ${delay / 1000} sekunder... (${retries} försök kvar)`);
             await new Promise(resolve => setTimeout(resolve, delay));
             return sendApiRequest(endpoint, data, retries - 1);
         }
@@ -130,7 +129,8 @@ async function logCommand(commandInfo) {
             commandInfo: JSON.stringify(commandInfo),
             host: process.env.DB_HOST
         });
-        await logError(error, 'warning').catch(() => {});
+        await logError(error, 'warning').catch(() => {
+        });
     }
 }
 
