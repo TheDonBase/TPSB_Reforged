@@ -26,7 +26,8 @@ async function sendApiRequest(endpoint, data, retries = 3, method = 'POST') {
         Logger.debug(`Skickar förfrågan till ${API_CONFIG.baseUrl}${endpoint}`, {
             host: process.env.DB_HOST,
             endpoint,
-            environment: process.env.NODE_ENV
+            environment: process.env.NODE_ENV,
+            method: method
         });
 
         const response = await fetch(`${API_CONFIG.baseUrl}${endpoint}`, {
