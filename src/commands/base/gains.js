@@ -115,7 +115,7 @@ track-stats:<your-api-key>
                         Speed: ${formatNumberWithCommas(gains.speed)}\n
                         Dexterity: ${formatNumberWithCommas(gains.dexterity)}\n
                         Defense: ${formatNumberWithCommas(gains.defense)}\n
-                        Total: ${formattedNumberWithcommas(gains.total)}`,
+                        Total: ${formattedNumberWithCommas(gains.total)}`,
                         inline: false,
                     }
                 ],
