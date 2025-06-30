@@ -53,7 +53,8 @@ track-stats:<your-api-key>
                 strength: newData.strength - oldData.strength,
                 speed: newData.speed - oldData.speed,
                 dexterity: newData.dexterity - oldData.dexterity,
-                defense: newData.defense - oldData.defense
+                defense: newData.defense - oldData.defense,
+                total: newData.total - oldData.total
             };
 
             // Update the database with new stats
