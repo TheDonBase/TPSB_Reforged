@@ -45,6 +45,7 @@ track-stats:<your-api-key>
             const formattedSpeed = formatNumberWithCommas(newData.speed);
             const formattedDexterity = formatNumberWithCommas(newData.dexterity);
             const formattedDefense = formatNumberWithCommas(newData.defense);
+            const formattedTotal = formatNumberWithCommas(newData.total);
 
 
             // Calculate gains
@@ -63,7 +64,6 @@ track-stats:<your-api-key>
                 speed: newData.speed,
                 dexterity: newData.dexterity,
                 defense: newData.defense,
-                updatedAt: new Date().toISOString()
             };
 
             try {
@@ -90,17 +90,32 @@ track-stats:<your-api-key>
                 fields: [
                     {
                         name: `Old Stats as of Date: ${oldStatsDate}`,
-                        value: `Strength: ${formatNumberWithCommas(oldData.strength)}\nSpeed: ${formatNumberWithCommas(oldData.speed)}\nDexterity: ${formatNumberWithCommas(oldData.dexterity)}\nDefense: ${formatNumberWithCommas(oldData.defense)}`,
+                        value: `
+                        Strength: ${formatNumberWithCommas(oldData.strength)}\n
+                        Speed: ${formatNumberWithCommas(oldData.speed)}\n
+                        Dexterity: ${formatNumberWithCommas(oldData.dexterity)}\n
+                        Defense: ${formatNumberWithCommas(oldData.defense)}\n
+                        Total: ${formatNumberWithCommas(oldData.total)}`,
                         inline: false,
                     },
                     {
                         name: 'New Stats',
-                        value: `Strength: ${formattedStrength}\nSpeed: ${formattedSpeed}\nDexterity: ${formattedDexterity}\nDefense: ${formattedDefense}`,
+                        value: `
+                        Strength: ${formattedStrength}\n
+                        Speed: ${formattedSpeed}\n
+                        Dexterity: ${formattedDexterity}\n
+                        Defense: ${formattedDefense}\n
+                        Total: ${formattedTotal}`,
                         inline: false,
                     },
                     {
                         name: 'Gains',
-                        value: `Strength: ${formatNumberWithCommas(gains.strength)}\nSpeed: ${formatNumberWithCommas(gains.speed)}\nDexterity: ${formatNumberWithCommas(gains.dexterity)}\nDefense: ${formatNumberWithCommas(gains.defense)}`,
+                        value: `
+                        Strength: ${formatNumberWithCommas(gains.strength)}\n
+                        Speed: ${formatNumberWithCommas(gains.speed)}\n
+                        Dexterity: ${formatNumberWithCommas(gains.dexterity)}\n
+                        Defense: ${formatNumberWithCommas(gains.defense)}\n
+                        Total: ${formattedNumberWithcommas(gains.total)}`,
                         inline: false,
                     }
                 ],
