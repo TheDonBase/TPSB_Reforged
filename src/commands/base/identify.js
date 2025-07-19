@@ -93,9 +93,6 @@ module.exports = {
             await interaction.member.setNickname(newUsername);
             Logger.info("Setting new nickname!");
 
-            const query = 'INSERT INTO identified_users (username, torn_id) VALUES (?, ?)';
-            await db.query(query, [data.name, data.player_id]);
-            Logger.info(`Saved ${data.name} to database with player id: ${data.player_id}`);
             interaction.reply('Nice! You are now verified. Thank you and Welcome ;) Happy Hunting.');
         } catch (error) {
             Logger.error(`There was an error: ${error}`);
