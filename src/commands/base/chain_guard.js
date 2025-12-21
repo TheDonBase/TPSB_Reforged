@@ -26,6 +26,7 @@ module.exports = {
     ),
 
   async execute(interaction) {
+    await interaction.deferReply({ ephemeral: true});
     const action = interaction.options.getString('action');
     const keyResult = await db.getApiKey('war');
     let api_key;
@@ -37,28 +38,28 @@ module.exports = {
         Logger.chain(`API Key: ${api_key}`);
       } else {
         Logger.chain("Invalid JSON format or empty array.");
-        return interaction.reply("Error: Unable to retrieve API key.");
+        return interaction.editReply("Error: Unable to retrieve API key.");
       }
     } catch (error) {
       Logger.chain(`Error parsing JSON: ${error.message}`);
-      return interaction.reply("Error: Unable to parse API key.");
+      return interaction.editReply("Error: Unable to parse API key.");
     }
 
     const tornApiKey = api_key;
     const factionUrl = `https://api.torn.com/faction/?selections=chain&key=${tornApiKey}`;
 
     if (action === 'start') {
-      if (chainGuard.isActive) return interaction.reply({content: 'Chain guard is already running!', ephemeral: true});
+      if (chainGuard.isActive) return interaction.editReply({content: 'Chain guard is already running!', ephemeral: true});
 
       chainGuard.isActive = true;
-      await interaction.reply('🔒 Chain guard started!');
+      await interaction.editReply('🔒 Chain guard started!');
       startChainGuard(interaction, factionUrl, tornApiKey);
     }
 
     if (action === 'stop') {
       chainGuard.isActive = false;
       if (chainGuard.timeout) clearTimeout(chainGuard.timeout);
-      return interaction.reply('🛑 Chain guard stopped.');
+      return interaction.editReply('🛑 Chain guard stopped.');
     }
   },
 };

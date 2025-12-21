@@ -6,18 +6,20 @@ module.exports = {
 		.setName('prison_break')
 		.setDescription('Call for a prison break!'),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const prison_breaker_role = '<@&1163661717667053638>';
         const prison_break_channel = interaction.guild.channels.cache.get('1163661314938392658');
-        
+
         try {
             const tornId = await extractTornIdFromNickname(interaction.member.displayName);
             const bust_url = `https://www.torn.com/jailview.php?XID=${tornId}&action=rescue&step=breakout`;
             await prison_break_channel.send({
                 content: `${prison_breaker_role}, ${interaction.user} needs a prison break! 🚨 \n[Bust out here](${bust_url})`,
             });
+            return interaction.editReply("Message sent!")
         } catch (error) {
             Logger.error(error);
-            interaction.reply("There was an error.");
+            interaction.editReply("There was an error.");
         }
     },
 };

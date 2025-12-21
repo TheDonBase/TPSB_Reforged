@@ -9,6 +9,7 @@ module.exports = {
         .setName('gains')
         .setDescription('Check your gains'),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const db = new Database();
 
         try {
@@ -26,7 +27,7 @@ track-stats:<your-api-key>
                 Replace <your-api-key> with your Torn API key.
                 And you don't have to use < - > these symbols, \n Make sure the API Key is ***Atleast*** Limited Access. if it is not and you have set an api key and recieve an error. Please contact TheDonBase.
                 `;
-                await interaction.reply(instructions);
+                await interaction.editReply(instructions);
                 return;
             }
 
@@ -108,10 +109,10 @@ track-stats:<your-api-key>
                 timestamp: new Date()
             };
 
-            await interaction.reply({embeds: [embed]});
+            await interaction.editReply({embeds: [embed]});
         } catch (error) {
             console.error('Error fetching stats:', error);
-            await interaction.reply('Error occurred while fetching your stats.');
+            await interaction.editReply('Error occurred while fetching your stats.');
         }
     },
 };

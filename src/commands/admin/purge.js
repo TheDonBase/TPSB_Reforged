@@ -15,7 +15,7 @@ module.exports = {
         let kickedUsers = 0;
         let kickedNames = [];
 
-        interaction.reply('Purge started please wait.')
+        interaction.editReply('Purge started please wait.')
 
         try {
             const generalChannel = await guild.channels.fetch(generalChannelId);
@@ -39,7 +39,7 @@ module.exports = {
             await interaction.editReply(`Successfully purged the faction. Purged ${kickedUsers} users out of ${guild.memberCount}!\nKicked Users: ${kickedList}`);
         } catch (error) {
             Logger.error(`Error kicking users: ${error}`);
-            await interaction.reply('Error occurred while purging users.');
+            await interaction.editReply('Error occurred while purging users.');
         }
 
         async function fetchFactionMembers() {

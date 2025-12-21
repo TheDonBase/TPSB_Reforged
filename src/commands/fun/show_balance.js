@@ -5,7 +5,8 @@ module.exports = {
         .setName('show-balance')
         .setDescription('Provides information about your currency balance.'),
     async execute(interaction, client) {
-        return interaction.reply(
+        await interaction.deferReply({ ephemeral: true});
+        return interaction.editReply(
             `Your balance is ${client.currency_helper.getBalance(interaction.user.id)}💰`
         )
     },

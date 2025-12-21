@@ -14,12 +14,13 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const db = new Database();
         const api_key_json = await db.getApiKey('peace');
 
         if (!api_key_json) {
             Logger.error("No API key found for the specified faction.");
-            return interaction.reply("Error: Unable to retrieve API key.");
+            return interaction.editReply("Error: Unable to retrieve API key.");
         }
 
         let api_key;
@@ -31,11 +32,11 @@ module.exports = {
                 Logger.debug(`API Key: ${api_key}`);
             } else {
                 Logger.error("Invalid JSON format or empty array.");
-                return interaction.reply("Error: Unable to retrieve API key.");
+                return interaction.editReply("Error: Unable to retrieve API key.");
             }
         } catch (error) {
             Logger.error(`Error parsing JSON: ${error.message}`);
-            return interaction.reply("Error: Unable to parse API key.");
+            return interaction.editReply("Error: Unable to parse API key.");
         }
 
         const torn_id = interaction.options.getString('torn_id');
@@ -45,7 +46,7 @@ module.exports = {
 
         // Check for bot and role requirements
         if (interaction.user.bot) {
-            return interaction.reply("Bots are not allowed to identify.");
+            return interaction.editReply("Bots are not allowed to identify.");
         }
 
         try {
@@ -54,12 +55,12 @@ module.exports = {
             const data = await response.json();
 
             if (!data || data.error) {
-                return interaction.reply("Failed to fetch user data. Please check your Torn ID.");
+                return interaction.editReply("Failed to fetch user data. Please check your Torn ID.");
             }
 
             if (data.faction.faction_id !== 8322) {
-                return interaction.reply(`Something went wrong, you are not part of the required faction. Please poke ${userMention(232126269284810753)} Cleanup in Aisle 3!`);
-            } 
+                return interaction.editReply(`Something went wrong, you are not part of the required faction. Please poke ${userMention(232126269284810753)} Cleanup in Aisle 3!`);
+            }
 
             const hasMemberRole = interaction.member.roles.cache.has(member_role);
             const hasGiveawayRole = interaction.member.roles.cache.has(giveaway_role);
@@ -77,15 +78,15 @@ module.exports = {
             // Check if username contains digits
             const newUsername = `${data.name} [${parsed_id}]`;
             if (/\[\d+\]/.test(interaction.member.nickname)) {
-                return interaction.reply("Your username makes it seem like you are already identified, what are you trying to achieve?");
+                return interaction.editReply("Your username makes it seem like you are already identified, what are you trying to achieve?");
             }
 
             if (parsed_id === 1142705) {
-                return interaction.reply("No-uuuuh you naughty boy, don't even try it. Or it will be the Execution Chamber for you!");
+                return interaction.editReply("No-uuuuh you naughty boy, don't even try it. Or it will be the Execution Chamber for you!");
             }
 
             if (!Number.isInteger(parsed_id)) {
-                return interaction.reply("Please provide a valid Torn ID.");
+                return interaction.editReply("Please provide a valid Torn ID.");
             }
 
 
@@ -93,10 +94,10 @@ module.exports = {
             await interaction.member.setNickname(newUsername);
             Logger.info("Setting new nickname!");
 
-            interaction.reply('Nice! You are now verified. Thank you and Welcome ;) Happy Hunting.');
+            interaction.editReply('Nice! You are now verified. Thank you and Welcome ;) Happy Hunting.');
         } catch (error) {
             Logger.error(`There was an error: ${error}`);
-            interaction.reply("An unexpected error occurred. Please try again.");
+            interaction.editReply("An unexpected error occurred. Please try again.");
         }
     }
 };

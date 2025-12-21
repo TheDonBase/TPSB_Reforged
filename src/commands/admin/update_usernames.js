@@ -32,10 +32,10 @@ module.exports = {
                 }
             }
 
-            await interaction.reply('Usernames updated successfully!');
+            await interaction.editReply('Usernames updated successfully!');
         } catch (error) {
             Logger.error('Error updating usernames:', error);
-            await interaction.reply('Error occurred while updating usernames.');
+            await interaction.editReply('Error occurred while updating usernames.');
         }
     }
 };

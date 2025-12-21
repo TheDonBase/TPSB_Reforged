@@ -9,19 +9,20 @@ module.exports = {
         .setName('get-nerve')
         .setDescription('Retrieve a list of usernames and their nerve values.'),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const db = new Database();
         const username = interaction.member.nickname; // Get the username of the requester
 
         try {
             Logger.info('Retrieving nerve data from the database...');
-            
+
             // Check if the user has the required role
             if (interaction.member.roles.cache.has(ROLE_ID)) {
                 // Fetch all users and their nerve values from the nerve table
                 const users = await db.query("SELECT username, nerve FROM nerve");
-                
+
                 if (users.length === 0) {
-                    await interaction.reply("No users found in the nerve table.");
+                    await interaction.editReply("No users found in the nerve table.");
                     return;
                 }
 
@@ -37,28 +38,28 @@ module.exports = {
                 nerveList += "```";
 
                 // Send the formatted response
-                await interaction.reply(`Nerve Values:\n${nerveList}`);
+                await interaction.editReply(`Nerve Values:\n${nerveList}`);
                 Logger.info('Nerve data retrieved and sent successfully.');
 
             } else {
                 // If the user doesn't have the role, fetch their own nerve value
                 Logger.info(`User ${username} does not have the role. Fetching their own nerve value...`);
-                
+
                 const result = await db.query("SELECT nerve FROM nerve WHERE username = ?", [username]);
-                
+
                 if (!result || result.length === 0) {
-                    await interaction.reply("You do not have a nerve entry in the database. Please set your nerve using /set-nerve.");
+                    await interaction.editReply("You do not have a nerve entry in the database. Please set your nerve using /set-nerve.");
                     return;
                 }
-            
+
                 const user = result[0];
-                await interaction.reply(`Your nerve value is: ${user.nerve}`);
+                await interaction.editReply(`Your nerve value is: ${user.nerve}`);
             }
-            
+
 
         } catch (error) {
             Logger.error(`Error retrieving nerve data: ${error.message}`, error);
-            await interaction.reply('There was an error while retrieving nerve data. Please try again later.');
+            await interaction.editReply('There was an error while retrieving nerve data. Please try again later.');
         } finally {
             try {
                 db.close(); // Close the database connection

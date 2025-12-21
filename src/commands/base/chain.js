@@ -10,6 +10,7 @@ module.exports = {
                 .setDescription("Chain ID")
                 .setMinValue(1)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const id = interaction.options.getInteger('id');
         const url = `https://croaztek.com/admin/api_get_chain/${id}`;
 
@@ -18,7 +19,7 @@ module.exports = {
                 method: 'GET'
             });
             if (!response.ok) {
-                interaction.reply("There was an error getting the chain details, please contact TheDonBase");
+                interaction.editReply("There was an error getting the chain details, please contact TheDonBase");
             }
             const chain = await response.json();
 
@@ -46,7 +47,7 @@ module.exports = {
             }
         } catch (error) {
             console.error('Error fetching or processing data:', error);
-            await interaction.reply('Failed to fetch or process data.');
+            await interaction.editReply('Failed to fetch or process data.');
         }
     },
 };

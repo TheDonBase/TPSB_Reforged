@@ -6,7 +6,8 @@ module.exports = {
         .setName('shop')
         .setDescription('Displays the current shop!'),
     async execute(interaction, client) {
+        await interaction.deferReply({ ephemeral: true});
         const items = await CurrencyShop.findAll();
-        return interaction.reply(codeBlock(items.map(i => `${i.name}: ${i.cost}💰`).join('\n')));
+        return interaction.editReply(codeBlock(items.map(i => `${i.name}: ${i.cost}💰`).join('\n')));
     },
 };

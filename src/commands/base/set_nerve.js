@@ -17,6 +17,7 @@ module.exports = {
             .setDescription('Optional: Why do you set it? Example: Initial add / Did last time wrong / Updating new NNB')
             .setRequired(false)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const db = new Database();
         const username = interaction.member.nickname; // Use username
         const nerve = interaction.options.getString('nerve');
@@ -48,7 +49,7 @@ module.exports = {
                 `, [username, nerve, now, initialPastNerve]);
 
                 Logger.info(`Added new nerve entry for user ${username}`);
-                await interaction.reply(`Your nerve has been set to ${nerve}.`);
+                await interaction.editReply(`Your nerve has been set to ${nerve}.`);
             } else {
                 Logger.info(`User ${username} exists. Updating record...`);
 
@@ -63,23 +64,23 @@ module.exports = {
 
                 // Append current nerve and reason to pastNerve
                 pastNerve.push({
-                    nerve: user[0].nerve, 
+                    nerve: user[0].nerve,
                     lastUpdated: user[0].lastUpdated,
                     reason: reason // Include the reason for this update
                 });
 
                 await db.query(`
-                    UPDATE nerve 
+                    UPDATE nerve
                     SET nerve = ?, lastUpdated = ?, pastNerve = ?
                     WHERE username = ?
                 `, [nerve, now, JSON.stringify(pastNerve), username]);
 
                 Logger.info(`Updated nerve for user ${username}`);
-                await interaction.reply(`Your nerve has been updated to ${nerve} with reason: "${reason}".`);
+                await interaction.editReply(`Your nerve has been updated to ${nerve} with reason: "${reason}".`);
             }
         } catch (error) {
             Logger.error(`Error handling nerve update for user ${username}: ${error.message}`, error);
-            await interaction.reply('There was an error while updating your nerve. Please try again later.');
+            await interaction.editReply('There was an error while updating your nerve. Please try again later.');
         } finally {
             try {
                 db.close(); // Close the database connection

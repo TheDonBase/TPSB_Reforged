@@ -24,7 +24,7 @@ module.exports = {
             const welcomeChannel = await guild.channels.fetch(welcomeChannelId);
 
             if (!welcomeChannel || !welcomeChannel.isTextBased()) {
-                return interaction.reply('This channel is either not found or not a text channel.');
+                return interaction.editReply('This channel is either not found or not a text channel.');
             }
 
             const membersInChannel = await guild.members.fetch();
@@ -77,10 +77,10 @@ module.exports = {
                 });
             }
 
-            await interaction.reply({ embeds: [embed] });
+            await interaction.editReply({ embeds: [embed] });
         } catch (error) {
             Logger.error(`Error processing members: ${error}`);
-            await interaction.reply('Error occurred while checking users.');
+            await interaction.editReply('Error occurred while checking users.');
         }
 
         async function processMembers(api_key) {

@@ -10,12 +10,13 @@ module.exports = {
         .setName('crimeexp')
         .setDescription('Get the crimeexp'),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const db = new Database();
         const api_key_json = await db.getApiKey('peace');
 
         if (!api_key_json) {
             Logger.error("No API key found for the specified faction.");
-            return interaction.reply("Error: Unable to retrieve API key.");
+            return interaction.editReply("Error: Unable to retrieve API key.");
         }
 
         let api_key;
@@ -27,11 +28,11 @@ module.exports = {
                 Logger.debug(`API Key: ${api_key}`);
             } else {
                 Logger.error("Invalid JSON format or empty array.");
-                return interaction.reply("Error: Unable to retrieve API key.");
+                return interaction.editReply("Error: Unable to retrieve API key.");
             }
         } catch (error) {
             Logger.error(`Error parsing JSON: ${error.message}`);
-            return interaction.reply("Error: Unable to parse API key.");
+            return interaction.editReply("Error: Unable to parse API key.");
         }
 
         try {
@@ -45,7 +46,7 @@ module.exports = {
             const memberData = await memberResponse.json();
 
             if (!crimeExpData || crimeExpData.error) {
-                return interaction.reply("Failed to fetch crimeExpData data. Please check your Torn ID.");
+                return interaction.editReply("Failed to fetch crimeExpData data. Please check your Torn ID.");
             }
 
             const members = memberData.members;
@@ -62,7 +63,7 @@ module.exports = {
 
             // Create and send the image
             const imagePath = await createDataTableImage(sortedMembers);
-            await interaction.reply({ files: [imagePath] });
+            await interaction.editReply({ files: [imagePath] });
 
             // Clean up: Delete the image after sending
             fs.unlink(imagePath, (err) => {
@@ -71,7 +72,7 @@ module.exports = {
 
         } catch (error) {
             Logger.error(`There was an error: ${error}`);
-            interaction.reply("An unexpected error occurred. Please try again.");
+            interaction.editReply("An unexpected error occurred. Please try again.");
         }
     }
 };

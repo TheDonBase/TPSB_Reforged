@@ -12,18 +12,19 @@ module.exports = {
         .setDescription("Choose the item to buy.")
         .setRequired(true)),
     async execute(interaction, client) {
+        await interaction.deferReply({ ephemeral: true});
         const itemName = interaction.options.getString('item');
         const item = await CurrencyShop.findOne({ where: { name: { [Op.like]: itemName } } });
 
-        if (!item) return interaction.reply(`That item doesn't exist.`);
+        if (!item) return interaction.editReply(`That item doesn't exist.`);
         if (item.cost > client.currency_helper.getBalance(interaction.user.id)) {
-            return interaction.reply(`You currently have ${client.currency_helper.getBalance(interaction.user.id)}, but the ${item.name} costs ${item.cost}!`);
+            return interaction.editReply(`You currently have ${client.currency_helper.getBalance(interaction.user.id)}, but the ${item.name} costs ${item.cost}!`);
         }
 
         const user = await Users.findOne({ where: { user_id: interaction.user.id } });
         await client.currency_helper.addBalance(interaction.user.id, -item.cost);
         await user.addItem(item);
 
-        return interaction.reply(`You've bought: ${item.name}.`);
+        return interaction.editReply(`You've bought: ${item.name}.`);
     },
 };

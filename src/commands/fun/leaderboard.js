@@ -1,11 +1,12 @@
 const {SlashCommandBuilder, codeBlock} = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
+    eepdata: new SlashCommandBuilder()
         .setName('leaderboard')
         .setDescription('Provides information about the currency leaderboard'),
     async execute(interaction, client) {
-        return interaction.reply(
+        await interaction.deferReply({ ephemeral: true});
+        return interaction.editReply(
             codeBlock(
                 `Currency Leaderboard\n\n` +
                 client.currency.sort((a, b) => b.balance - a.balance)

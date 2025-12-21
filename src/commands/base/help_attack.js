@@ -10,6 +10,7 @@ module.exports = {
         .setDescription('What is the target you need help with? (Torn id) - Example \"1142705\"')
         .setRequired(true)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const chainers = '<@&1117518078616539197>';
         const help_channel = interaction.guild.channels.cache.get('1192646606026195025');
         const target = interaction.options.getString('target');

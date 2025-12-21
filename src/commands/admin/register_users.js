@@ -20,10 +20,10 @@ module.exports = {
                 await db.query(query, [username]);
             }
 
-            await interaction.reply('Successfully registered all users in the database.');
+            await interaction.editReply('Successfully registered all users in the database.');
         } catch (error) {
             Logger.error('Error registering users:', error);
-            await interaction.reply('Error occurred while registering users.');
+            await interaction.editReply('Error occurred while registering users.');
         }
     }
 };

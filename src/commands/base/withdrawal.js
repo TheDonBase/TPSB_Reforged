@@ -12,6 +12,7 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         try {
             const bankerRoleId = '1165659166501785741'; // Update with actual role ID
             const bankerChannelId = '815742620802089000'; // Update with actual channel ID
@@ -28,17 +29,17 @@ module.exports = {
             } else if (amountOption.toLowerCase().endsWith('k') || amountOption.toLowerCase().endsWith('m')) {
                 await bankerChannel.send(`${bankerRoleMention} ${userMention(interaction.user.id)} wants to withdraw **${amountOption}** of their cash from the faction bank!`);
             } else if (!isNaN(amountOption) && parseFloat(amountOption) === 0) {
-                await interaction.reply("You seem to want to withdraw ***0***$. Is that correct?");
+                await interaction.editReply("You seem to want to withdraw ***0***$. Is that correct?");
                 return;
             } else {
-                await interaction.reply("Invalid input. Please provide either 'All' or a valid amount.");
+                await interaction.editReply("Invalid input. Please provide either 'All' or a valid amount.");
                 return;
             }
 
-            await interaction.reply("I have notified the bankers :)");
+            await interaction.editReply("I have notified the bankers :)");
         } catch (error) {
             Logger.error(`There was an error executing ${this.data.name} with error: ${error}`);
-            interaction.reply("There was an unexpected error. Please contact TheDonBase.");
+            interaction.editReply("There was an unexpected error. Please contact TheDonBase.");
         }
     },
 };

@@ -25,14 +25,15 @@ module.exports = {
         option.setName('reason')
         .setDescription('Tell the person why you want to slap them.')),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true});
         const target = interaction.options.getUser('target');
         const user = interaction.user;
         const weapon = interaction.options.getString('weapon');
         const reason = interaction.options.getString('reason');
         if(reason != null) {
-            interaction.reply(`${userMention(user.id)} has slapped ${userMention(target.id)} with a **${weapon}** because: ${reason}`)
+            interaction.editReply(`${userMention(user.id)} has slapped ${userMention(target.id)} with a **${weapon}** because: ${reason}`)
         } else {
-            interaction.reply(`${userMention(user.id)} has slapped ${userMention(target.id)} with a **${weapon}**`)
+            interaction.editReply(`${userMention(user.id)} has slapped ${userMention(target.id)} with a **${weapon}**`)
         }
         },
 };
