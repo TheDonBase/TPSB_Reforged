@@ -135,3 +135,5 @@ dist
 
 # Other
 seq_config.json
+.idea/*
+.idea/

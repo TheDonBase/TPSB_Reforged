@@ -22,21 +22,25 @@
   "author": "TheDonBase",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.20.3",
-    "canvas": "^2.11.2",
-    "cors": "^2.8.5",
-    "discord.js": "^14.12.1",
-    "dotenv": "^16.5.0",
-    "ejs": "^3.1.10",
-    "express": "^4.21.0",
+    "body-parser": "^2.3.0",
+    "canvas": "^3.2.3",
+    "cors": "^2.8.6",
+    "discord.js": "^14.27.0",
+    "dotenv": "^18.0.5",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
     "fetch": "^1.1.0",
     "mysql": "^2.18.1",
-    "mysql2": "^3.9.1",
-    "node-cron": "^3.0.3",
+    "mysql2": "^3.24.5",
+    "node-cron": "^4.6.0",
     "node-fetch": "^3.3.2",
-    "redis": "^4.7.0",
-    "sequelize": "^6.37.1",
-    "sequelize-cli": "^6.6.2",
-    "sqlite3": "^5.1.7"
+    "npm-check-updates": "^23.1.0",
+    "redis": "^6.3.0",
+    "sequelize": "^6.37.8",
+    "sequelize-cli": "^6.6.5",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
