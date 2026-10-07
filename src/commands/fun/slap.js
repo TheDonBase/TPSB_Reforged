@@ -25,7 +25,7 @@ module.exports = {
         option.setName('reason')
         .setDescription('Tell the person why you want to slap them.')),
     async execute(interaction) {
-        await interaction.deferReply({ ephemeral: true});
+        await interaction.deferReply({ ephemeral: false});
         const target = interaction.options.getUser('target');
         const user = interaction.user;
         const weapon = interaction.options.getString('weapon');
